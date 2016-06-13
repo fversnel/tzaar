@@ -7,7 +7,8 @@
 (def move-types #{:attack :stack :pass})
 (defn attack-move? [move] (= :attack (:move-type move)))
 (defn stack-move? [move] (= :stack (:move-type move)))
-(defn pass-move? [move] (= :pass (:move-type move)))
+(def pass-move {:move-type :pass})
+(defn pass-move? [move] (= move pass-move))
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
