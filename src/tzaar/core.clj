@@ -104,7 +104,7 @@
                set)))
       #{})))
 
-(defn all-possible-moves [board color]
+(defn all-moves [board color]
   (->> board
        (iterate-stacks color)
        (map :position)
@@ -113,7 +113,7 @@
 ; Optionally add under which condition the player has lost
 (defn lost?
   [board player-color]
-  (let [moves (all-possible-moves board player-color)
+  (let [moves (all-moves board player-color)
         attack-moves (filter attack-move? moves)]
     (or (stack-type-missing? board player-color)
         (empty? attack-moves))))
