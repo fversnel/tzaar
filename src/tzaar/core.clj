@@ -7,7 +7,7 @@
 (def move-types #{:attack :stack})
 
 (def piece-types #{:tzaar :tzarra :tott})
-(defn single-piece [color type] [[color type]])
+(defn single-stack [color type] [[color type]])
 (defn stack-color [piece] (first (peek piece)))
 (defn stack-color? [color]
   (fn [piece] (= color (stack-color piece))))
@@ -26,12 +26,17 @@
         :nothing))
     :nothing))
 
-(defn iterate-stacks [board]
+(defn iterate-slots [board]
   (for [y (range 0 (count board))
         x (range 0 (count (nth board y)))
-        :let [slot (lookup-slot board [x y])]
-        :when (stack? slot)]
-    {:position [x y] :stack slot}))
+        :let [slot (lookup-slot board [x y])]]
+    {:position [x y] :slot slot}))
+
+(defn iterate-stacks [color board]
+  (->> board
+       iterate-slots
+       (filter stack?)
+       (filter #(= color (stack-color (:slot %))))))
 
 ; Returns: [{:move :attack :position {:x 1 :y 2}]
 (defn possible-moves [board position]
@@ -75,33 +80,34 @@
                          (and (= move-type :attack)
                               (let [enemy-stack (lookup-slot board to)]
                                 (< (stack-size stack) (stack-size enemy-stack))))))
-               set))))))
+               set)))
+      #{})))
 
 (defn attack-move? [move] (= :attack (:move-type move)))
 (defn stack-move? [move] (= :stack (:move-type move)))
 
 (defn all-possible-moves [board color]
   (->> board
-       iterate-stacks
-       (filter #(= color (stack-color (:stack %))))
+       (iterate-stacks color)
        (map :position)
        (map #(possible-moves board %))
        flatten))
 
 ; Return: :none, :white :black
 ; Optionally add under which condition the player has won
-(defn lost? [board player-color]
+(defn lost?
+  [board player-color]
   (let [board-pieces (->> board
-                          iterate-stacks
-                          (map :stack)
-                          (filter (stack-color? player-color))
+                          (iterate-stacks player-color)
+                          (map :slot)
                           (map stack-type))
         moves (all-possible-moves board player-color)
         attack-moves (filter attack-move? moves)]
     (or (not= piece-types (set board-pieces))
         (empty? attack-moves))))
 
-(defn apply-move [board {:keys [from to move-type] :as move}]
+(defn apply-move
+  [board {:keys [from to move-type] :as move}]
   (let [from-stack (lookup-slot board from)
         to-stack (lookup-slot board to)
         new-stack (case move-type
@@ -112,20 +118,22 @@
       (update-position to new-stack))))
 
 
-; TODO Finish random board generator
 (defn random-board []
-  (let [color-pieces (fn [color] (map #(single-piece color %)
+  (let [color-stacks (fn [color] (map #(single-stack color %)
                                       (concat (repeat 6 :tzaar)
                                               (repeat 9 :tzarra)
                                               (repeat 15 :tott))))
-        shuffled-pieces (shuffle (concat (color-pieces :white)
-                                         (color-pieces :black)))]
-    (loop [pieces shuffled-pieces
+        shuffled-stacks (shuffle (concat (color-stacks :white)
+                                         (color-stacks :black)))]
+    (loop [stacks shuffled-stacks
            board empty-board]
-      (if (empty? pieces)
+      (if (empty? stacks)
         board
         ; Find empty space, put piece in it
-        (let [new-board ()]
-          (recur (rest pieces) new-board)))
-
-      )))
+        (let [empty-position (->> board
+                                  iterate-slots
+                                  (filter #(= :empty (:slot %)))
+                                  (map :position)
+                                  first)
+              new-board (update-position board empty-position (first stacks))]
+          (recur (rest stacks) new-board))))))
