@@ -71,7 +71,7 @@
                        (map #(if (stack? (:slot %))
                               {:from position
                                :to (:position %)
-                               :move-type (if (= color (stack-color (:slot %)))
+                               :move-type (if (stack-color? color (:slot %))
                                             :stack
                                             :attack)}
                               :nothing))
@@ -85,10 +85,8 @@
                          (neighbors {:xfn identity :yfn dec})
 
                          ; Diagonal
-                         (neighbors {:xfn inc :yfn inc})
-                         (neighbors {:xfn inc :yfn dec})
-                         (neighbors {:xfn dec :yfn inc})
-                         (neighbors {:xfn dec :yfn dec})]]
+                         (neighbors {:xfn dec :yfn dec})
+                         (neighbors {:xfn inc :yfn inc})]]
           (->> neighbors
                (remove #(= :nothing %))
                ; Remove stacks that cannot be attacked
