@@ -4,14 +4,17 @@
 (def empty-board (parser/read-board "empty-board"))
 (def default-board (parser/read-board "default-board"))
 
-(def move-types #{:attack :stack})
+(def move-types #{:attack :stack :pass})
+(defn attack-move? [move] (= :attack (:move-type move)))
+(defn stack-move? [move] (= :stack (:move-type move)))
+(defn pass-move? [move] (= :pass (:move-type move)))
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
-(defn stack-color [piece] (first (peek piece)))
-(defn stack-color? [color piece] (= color (stack-color piece)))
-(defn stack-type [piece] (second (peek piece)))
-(defn stack-size [piece] (count piece))
+(defn stack-color [stack] (first (first stack)))
+(defn stack-color? [color stack] (= color (stack-color stack)))
+(defn stack-type [stack] (second (first stack)))
+(defn stack-size [stack] (count stack))
 (defn stack? [slot] (vector? slot))
 
 (defn update-position [board [x y] new-slot]
@@ -32,9 +35,6 @@
        (filter #(and (stack? (:slot %))
                      (stack-color? color (:slot %))))))
 
-(defn attack-move? [move] (= :attack (:move-type move)))
-(defn stack-move? [move] (= :stack (:move-type move)))
-
 (defn apply-move
   [board {:keys [from to move-type] :as move}]
   (let [from-stack (lookup-slot board from)
@@ -48,11 +48,11 @@
 
 (defn stack-type-missing?
   [board color]
-  (let [board-pieces (->> board
-                          (iterate-stacks color)
-                          (map :slot)
-                          (map stack-type))]
-    (not= stack-types (set board-pieces))))
+  (let [stacks (->> board
+                    (iterate-stacks color)
+                    (map :slot)
+                    (map stack-type))]
+    (not= stack-types (set stacks))))
 
 (defn possible-moves [board position]
   (let [stack (lookup-slot board position)
@@ -90,7 +90,7 @@
                          (neighbors {:xfn dec :yfn dec})]]
           (->> neighbors
                (remove #(= :nothing %))
-               ; Remove pieces that cannot be attacked
+               ; Remove stacks that cannot be attacked
                (remove (fn [move]
                          (and (attack-move? move)
                               (let [enemy-stack (lookup-slot board (:to move))]
