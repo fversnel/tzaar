@@ -9,8 +9,7 @@
 (def piece-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
 (defn stack-color [piece] (first (peek piece)))
-(defn stack-color? [color]
-  (fn [piece] (= color (stack-color piece))))
+(defn stack-color? [color piece] (= color (stack-color piece)))
 (defn stack-type [piece] (second (peek piece)))
 (defn stack-size [piece] (count piece))
 (defn stack? [slot] (vector? slot))
@@ -35,8 +34,8 @@
 (defn iterate-stacks [color board]
   (->> board
        iterate-slots
-       (filter stack?)
-       (filter #(= color (stack-color (:slot %))))))
+       (filter #(and (stack? (:slot %))
+                     (stack-color? color (:slot %))))))
 
 ; Returns: [{:move :attack :position {:x 1 :y 2}]
 (defn possible-moves [board position]
@@ -93,7 +92,6 @@
        (map #(possible-moves board %))
        flatten))
 
-; Return: :none, :white :black
 ; Optionally add under which condition the player has won
 (defn lost?
   [board player-color]
@@ -129,7 +127,6 @@
            board empty-board]
       (if (empty? stacks)
         board
-        ; Find empty space, put piece in it
         (let [empty-position (->> board
                                   iterate-slots
                                   (filter #(= :empty (:slot %)))
