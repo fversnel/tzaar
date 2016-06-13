@@ -4,74 +4,120 @@
 (def empty-board (parser/read-board "empty-board"))
 (def default-board (parser/read-board "default-board"))
 
-(def piece-types #{:tzaar :tzarra :tott})
 (def move-types #{:attack :stack})
-(defn piece-color [piece] (first piece))
-(defn piece-type [piece] (second piece))
-(defn piece? [slot] (and (vector? slot)
-                         (piece-types (piece-type slot))))
 
-(defn in-range? [coll index]
-  (and (< index (count coll)) (<= 0 index)))
+(def piece-types #{:tzaar :tzarra :tott})
+(defn single-piece [color type] [[color type]])
+(defn stack-color [piece] (first (peek piece)))
+(defn stack-color? [color]
+  (fn [piece] (= color (stack-color piece))))
+(defn stack-type [piece] (second (peek piece)))
+(defn stack-size [piece] (count piece))
+(defn stack? [slot] (vector? slot))
+
+(defn update-position [board [x y] new-slot]
+  (assoc-in board [y x] new-slot))
 
 (defn lookup-slot [board [x y]]
-  (if (in-range? board y)
+  (if (contains? board y)
     (let [row (nth board y)]
-      (if (in-range? row x)
+      (if (contains? row x)
         (nth row x)
-        :none))
-    :none))
+        :nothing))
+    :nothing))
+
+(defn iterate-stacks [board]
+  (for [y (range 0 (count board))
+        x (range 0 (count (nth board y)))
+        :let [slot (lookup-slot board [x y])]
+        :when (stack? slot)]
+    {:position [x y] :stack slot}))
 
 ; Returns: [{:move :attack :position {:x 1 :y 2}]
 (defn possible-moves [board position]
-  (let [piece (lookup-slot board position)
-        color (piece-color piece)]
-    (if (piece? piece)
-      (letfn [(walk-board [{:keys [xfn yfn]}]
+  (let [stack (lookup-slot board position)
+        color (stack-color stack)]
+    (if (stack? stack)
+      (letfn [(neighbors [{:keys [xfn yfn]}]
                 (let [positions (iterate (fn [[x y]]
                                            [(xfn x) (yfn y)])
                                          position)]
                   (->> positions
                        (remove #(= position %))
-                       (map (fn [pos] {:slot (lookup-slot board pos) :position pos}))
+                       (map #(assoc {} :slot (lookup-slot board %)
+                                       :position %))
                        (remove #(= :empty (:slot %)))
-                       (map #(if (piece? (:slot %))
-                                (if (= color (piece-color (:slot %)))
-                                  {:move :stack :position (:position %)}
-                                  {:move :attack :position (:position %)})
-                              :none))
+                       (map #(if (stack? (:slot %))
+                              {:from position
+                               :to (:position %)
+                               :move-type (if (= color (stack-color (:slot %)))
+                                            :stack
+                                            :attack)}
+                              :nothing))
                        first)))]
-        (let [moves [; Horizontal moves
-                     (walk-board {:xfn inc :yfn identity})
-                     (walk-board {:xfn dec :yfn identity})
+        (let [moves [; Horizontal
+                     (neighbors {:xfn inc :yfn identity})
+                     (neighbors {:xfn dec :yfn identity})
 
-                     ; Vertical moves
-                     (walk-board {:xfn identity :yfn inc})
-                     (walk-board {:xfn identity :yfn dec})
+                     ; Vertical
+                     (neighbors {:xfn identity :yfn inc})
+                     (neighbors {:xfn identity :yfn dec})
 
-                     ; Diagonal moves
-                     (walk-board {:xfn inc :yfn inc})
-                     (walk-board {:xfn inc :yfn dec})
-                     (walk-board {:xfn dec :yfn inc})
-                     (walk-board {:xfn dec :yfn dec})
-                     ]]
-          (->> moves (remove (partial = :none)) set))))))
+                     ; Diagonal
+                     (neighbors {:xfn inc :yfn inc})
+                     (neighbors {:xfn inc :yfn dec})
+                     (neighbors {:xfn dec :yfn inc})
+                     (neighbors {:xfn dec :yfn dec})]]
+          (->> moves
+               (remove #(= :nothing %))
+               ; Remove pieces that cannot be attacked
+               (remove (fn [{:keys [to move-type]}]
+                         (and (= move-type :attack)
+                              (let [enemy-stack (lookup-slot board to)]
+                                (< (stack-size stack) (stack-size enemy-stack))))))
+               set))))))
+
+(defn attack-move? [move] (= :attack (:move-type move)))
+(defn stack-move? [move] (= :stack (:move-type move)))
+
+(defn all-possible-moves [board color]
+  (->> board
+       iterate-stacks
+       (filter #(= color (stack-color (:stack %))))
+       (map :position)
+       (map #(possible-moves board %))
+       flatten))
 
 ; Return: :none, :white :black
 ; Optionally add under which condition the player has won
-(defn winner [board])
+(defn lost? [board player-color]
+  (let [board-pieces (->> board
+                          iterate-stacks
+                          (map :stack)
+                          (filter (stack-color? player-color))
+                          (map stack-type))
+        moves (all-possible-moves board player-color)
+        attack-moves (filter attack-move? moves)]
+    (or (not= piece-types (set board-pieces))
+        (empty? attack-moves))))
 
-(defn attack-moves [moves]
-  (filter #(= :attack (:move %)) moves))
+(defn apply-move [board {:keys [from to move-type] :as move}]
+  (let [from-stack (lookup-slot board from)
+        to-stack (lookup-slot board to)
+        new-stack (case move-type
+                    :attack from-stack
+                    :stack (concat from-stack to-stack))]
+  (-> board
+      (update-position from :empty)
+      (update-position to new-stack))))
 
-(defn stack-moves [moves]
-  (filter #(= :stack (:move %)) moves))
 
 ; TODO Finish random board generator
 (defn random-board []
-  (let [color-pieces (fn [color] (map #([color %]) (concat (repeat 6 :tzaar)
-                                                           (repeat 9 :tzarra)
-                                                           (repeat 15 :tott))))
+  (let [color-pieces (fn [color] (map #(single-piece color %)
+                                      (concat (repeat 6 :tzaar)
+                                              (repeat 9 :tzarra)
+                                              (repeat 15 :tott))))
         shuffled-pieces (shuffle (concat (color-pieces :white)
                                          (color-pieces :black)))]
     (loop [pieces shuffled-pieces
