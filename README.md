@@ -1,14 +1,10 @@
 # tzaar
 
-A Clojure library designed to ... well, that part is up to you.
-
-## Usage
-
-FIXME
+Clojure implementation of the abstract strategy game Tzaar by Kris Burm
 
 ## License
 
-Copyright © 2016 FIXME
+Copyright © 2016 Frank Versnel
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
