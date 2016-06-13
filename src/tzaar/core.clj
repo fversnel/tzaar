@@ -18,12 +18,7 @@
   (assoc-in board [y x] new-slot))
 
 (defn lookup-slot [board [x y]]
-  (if (contains? board y)
-    (let [row (nth board y)]
-      (if (contains? row x)
-        (nth row x)
-        :nothing))
-    :nothing))
+  (or (get-in board [y x]) :nothing))
 
 (defn iterate-slots [board]
   (for [y (range 0 (count board))
@@ -80,20 +75,20 @@
                                             :attack)}
                               :nothing))
                        first)))]
-        (let [moves [; Horizontal
-                     (neighbors {:xfn inc :yfn identity})
-                     (neighbors {:xfn dec :yfn identity})
+        (let [neighbors [; Horizontal
+                         (neighbors {:xfn inc :yfn identity})
+                         (neighbors {:xfn dec :yfn identity})
 
-                     ; Vertical
-                     (neighbors {:xfn identity :yfn inc})
-                     (neighbors {:xfn identity :yfn dec})
+                         ; Vertical
+                         (neighbors {:xfn identity :yfn inc})
+                         (neighbors {:xfn identity :yfn dec})
 
-                     ; Diagonal
-                     (neighbors {:xfn inc :yfn inc})
-                     (neighbors {:xfn inc :yfn dec})
-                     (neighbors {:xfn dec :yfn inc})
-                     (neighbors {:xfn dec :yfn dec})]]
-          (->> moves
+                         ; Diagonal
+                         (neighbors {:xfn inc :yfn inc})
+                         (neighbors {:xfn inc :yfn dec})
+                         (neighbors {:xfn dec :yfn inc})
+                         (neighbors {:xfn dec :yfn dec})]]
+          (->> neighbors
                (remove #(= :nothing %))
                ; Remove pieces that cannot be attacked
                (remove (fn [move]
