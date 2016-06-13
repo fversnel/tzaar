@@ -16,7 +16,7 @@
 (defn stack-color? [color stack] (= color (stack-color stack)))
 (defn stack-type [stack] (second (first stack)))
 (defn stack-size [stack] (count stack))
-(defn stack? [slot] (vector? slot))
+(defn stack? [slot] (sequential? slot))
 
 (defn update-position [board [x y] new-slot]
   (assoc-in board [y x] new-slot))
@@ -56,26 +56,26 @@
     (not= stack-types (set stacks))))
 
 (defn possible-moves [board position]
-  (let [stack (lookup-slot board position)
-        color (stack-color stack)]
-    (if (stack? stack)
-      (letfn [(neighbors [{:keys [xfn yfn]}]
-                (let [positions (iterate (fn [[x y]]
-                                           [(xfn x) (yfn y)])
-                                         position)]
-                  (->> positions
-                       (remove #(= position %))
-                       (map #(assoc {} :slot (lookup-slot board %)
-                                       :position %))
-                       (remove #(= :empty (:slot %)))
-                       (map #(if (stack? (:slot %))
-                              {:from position
-                               :to (:position %)
-                               :move-type (if (stack-color? color (:slot %))
-                                            :stack
-                                            :attack)}
-                              :nothing))
-                       first)))]
+  (if (stack? (lookup-slot board position))
+    (let [stack (lookup-slot board position)
+          color (when (stack? stack) (stack-color stack))
+          neighbors (fn [{:keys [xfn yfn]}]
+                      (let [positions (iterate (fn [[x y]]
+                                                [(xfn x) (yfn y)])
+                                              position)]
+                       (->> positions
+                            (remove #(= position %))
+                            (map #(assoc {} :slot (lookup-slot board %)
+                                            :position %))
+                            (remove #(= :empty (:slot %)))
+                            (map #(if (stack? (:slot %))
+                                   {:from position
+                                    :to (:position %)
+                                    :move-type (if (stack-color? color (:slot %))
+                                                 :stack
+                                                 :attack)}
+                                   :nothing))
+                            first)))]
         (let [neighbors [; Horizontal
                          (neighbors {:xfn inc :yfn identity})
                          (neighbors {:xfn dec :yfn identity})
@@ -101,7 +101,7 @@
                                 (apply-move board move)
                                 color))))
                set)))
-      #{})))
+      #{}))
 
 (defn all-moves [board color]
   (->> board
