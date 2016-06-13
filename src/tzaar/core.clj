@@ -26,9 +26,9 @@
 
 (defn iterate-slots [board]
   (for [y (range 0 (count board))
-        x (range 0 (count (nth board y)))
-        :let [slot (lookup-slot board [x y])]]
-    {:position [x y] :slot slot}))
+        x (range 0 (count (nth board y)))]
+    {:position [x y]
+     :slot (lookup-slot board [x y])}))
 
 (defn iterate-stacks [color board]
   (->> board
@@ -57,7 +57,7 @@
 
 (defn possible-moves [board position]
   (let [stack (lookup-slot board position)
-        player-color (stack-color stack)]
+        color (stack-color stack)]
     (if (stack? stack)
       (letfn [(neighbors [{:keys [xfn yfn]}]
                 (let [positions (iterate (fn [[x y]]
@@ -71,7 +71,7 @@
                        (map #(if (stack? (:slot %))
                               {:from position
                                :to (:position %)
-                               :move-type (if (= player-color (stack-color (:slot %)))
+                               :move-type (if (= color (stack-color (:slot %)))
                                             :stack
                                             :attack)}
                               :nothing))
@@ -101,7 +101,7 @@
                          (and (stack-move? move)
                               (stack-type-missing?
                                 (apply-move board move)
-                                player-color))))
+                                color))))
                set)))
       #{})))
 
@@ -113,10 +113,10 @@
 
 ; Optionally add under which condition the player has lost
 (defn lost?
-  [board player-color]
-  (let [moves (all-moves board player-color)
+  [board color]
+  (let [moves (all-moves board color)
         attack-moves (filter attack-move? moves)]
-    (or (stack-type-missing? board player-color)
+    (or (stack-type-missing? board color)
         (empty? attack-moves))))
 
 (defn random-board []
