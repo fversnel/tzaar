@@ -122,15 +122,16 @@
                                               (repeat 9 :tzarra)
                                               (repeat 15 :tott))))
         shuffled-stacks (shuffle (concat (color-stacks :white)
-                                         (color-stacks :black)))]
+                                         (color-stacks :black)))
+        empty-positions (->> empty-board
+                             iterate-slots
+                             (filter #(= :empty (:slot %)))
+                             (map :position))]
     (loop [stacks shuffled-stacks
+           empty-positions empty-positions
            board empty-board]
       (if (empty? stacks)
         board
-        (let [empty-position (->> board
-                                  iterate-slots
-                                  (filter #(= :empty (:slot %)))
-                                  (map :position)
-                                  first)
+        (let [empty-position (first empty-positions)
               new-board (update-position board empty-position (first stacks))]
-          (recur (rest stacks) new-board))))))
+          (recur (rest stacks) (rest empty-positions) new-board))))))
