@@ -55,59 +55,58 @@
                     (map stack-type))]
     (not= stack-types (set stacks))))
 
-(defn possible-moves [board position]
+(defn neighbors [board position]
+  (letfn [(neighbor [{:keys [xfn yfn]}]
+            (let [positions (iterate (fn [[x y]] [(xfn x) (yfn y)])
+                                     position)]
+              (->> positions
+                   (remove #(= position %))
+                   (map #(assoc {} :slot (lookup-slot board %)
+                                   :position %))
+                   (remove #(= :empty (:slot %)))
+                   first)))]
+    [; Horizontal
+      (neighbor {:xfn inc :yfn identity})
+      (neighbor {:xfn dec :yfn identity})
+
+      ; Vertical
+      (neighbor {:xfn identity :yfn inc})
+      (neighbor {:xfn identity :yfn dec})
+
+      ; Diagonal
+      (neighbor {:xfn dec :yfn dec})
+      (neighbor {:xfn inc :yfn inc})]))
+
+(defn moves [board position]
   (if (stack? (lookup-slot board position))
     (let [stack (lookup-slot board position)
-          color (when (stack? stack) (stack-color stack))
-          neighbors (fn [{:keys [xfn yfn]}]
-                      (let [positions (iterate (fn [[x y]]
-                                                [(xfn x) (yfn y)])
-                                              position)]
-                       (->> positions
-                            (remove #(= position %))
-                            (map #(assoc {} :slot (lookup-slot board %)
-                                            :position %))
-                            (remove #(= :empty (:slot %)))
-                            (map #(if (stack? (:slot %))
-                                   {:from position
-                                    :to (:position %)
-                                    :move-type (if (stack-color? color (:slot %))
-                                                 :stack
-                                                 :attack)}
-                                   :nothing))
-                            first)))]
-        (let [neighbors [; Horizontal
-                         (neighbors {:xfn inc :yfn identity})
-                         (neighbors {:xfn dec :yfn identity})
-
-                         ; Vertical
-                         (neighbors {:xfn identity :yfn inc})
-                         (neighbors {:xfn identity :yfn dec})
-
-                         ; Diagonal
-                         (neighbors {:xfn dec :yfn dec})
-                         (neighbors {:xfn inc :yfn inc})]]
-          (->> neighbors
-               (remove #(= :nothing %))
-               ; Remove stacks that cannot be attacked
-               (remove (fn [move]
-                         (and (attack-move? move)
-                              (let [enemy-stack (lookup-slot board (:to move))]
-                                (< (stack-size stack) (stack-size enemy-stack))))))
-               ; Remove moves that would kill yourself
-               (remove (fn [move]
-                         (and (stack-move? move)
-                              (stack-type-missing?
-                                (apply-move board move)
-                                color))))
-               set)))
-      #{}))
+          color (when (stack? stack) (stack-color stack))]
+      (->> (neighbors board position)
+           (remove #(= :nothing (:slot %)))
+           (map #(assoc {}
+                  :from position
+                  :to (:position %)
+                  :move-type (if (stack-color? color (:slot %))
+                                :stack
+                                :attack)))
+           ; Remove stacks that cannot be attacked
+           (remove (fn [move]
+                     (and (attack-move? move)
+                          (let [enemy-stack (lookup-slot board (:to move))]
+                            (< (stack-size stack) (stack-size enemy-stack))))))
+           ; Remove moves that would kill yourself
+           (remove (fn [move]
+                     (and (stack-move? move)
+                          (stack-type-missing?
+                            (apply-move board move)
+                            color))))))
+      []))
 
 (defn all-moves [board color]
   (->> board
        (iterate-stacks color)
        (map :position)
-       (mapcat #(possible-moves board %))))
+       (mapcat #(moves board %))))
 
 ; Optionally add under which condition the player has lost
 (defn lost?
