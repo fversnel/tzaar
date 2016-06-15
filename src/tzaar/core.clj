@@ -1,5 +1,6 @@
 (ns tzaar.core
-  (require [tzaar.parser :as parser]))
+  (require [tzaar.parser :as parser]
+           [clojure.string :as string]))
 
 (def empty-board (parser/read-board "empty-board"))
 (def default-board (parser/read-board "default-board"))
@@ -12,9 +13,10 @@
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
-(defn stack-color [stack] (first (first stack)))
+(defn top-piece [stack] (first stack))
+(defn stack-color [stack] (first (top-piece stack)))
 (defn stack-color? [color stack] (= color (stack-color stack)))
-(defn stack-type [stack] (second (first stack)))
+(defn stack-type [stack] (second (top-piece stack)))
 (defn stack-size [stack] (count stack))
 (defn stack? [slot] (sequential? slot))
 
@@ -102,6 +104,10 @@
                             color))))))
       []))
 
+(defn attack-moves [board position]
+  (-> (moves board position)
+      (filter attack-move?)))
+
 (defn all-moves [board color]
   (->> board
        (iterate-stacks color)
@@ -137,3 +143,21 @@
                                 (first stacks))
                (rest stacks)
                (rest empty-positions))))))
+
+(defn board-to-str [board]
+  (letfn [(slot-to-str [slot]
+            (case (if (stack? slot) (top-piece slot) slot)
+              [:white :tott] "w1"
+              [:white :tzarra] "w2"
+              [:white :tzaar] "w3"
+              [:black :tott] "b1"
+              [:black :tzarra] "b2"
+              [:black :tzaar] "b3"
+              :empty "e "
+              :nothing "n "))]
+    (let [row-strs (for [row board]
+                     (->>
+                       row
+                       (map slot-to-str)
+                       (string/join \space)))]
+      (string/join \newline row-strs))))

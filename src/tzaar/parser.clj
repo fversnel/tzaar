@@ -24,21 +24,3 @@
           (->> slots (map parse-slot) vec))))))
 
 (def read-board (comp parse-board slurp io/resource))
-
-;(defn board-to-str [board]
-;  (letfn [(slot-to-str [slot]
-;            (case slot
-;              [:white :tott] "w1"
-;              [:white :tzarra] "w2"
-;              [:white :tzaar] "w3"
-;              [:black :tott] "b1"
-;              [:black :tzarra] "b2"
-;              [:black :tzaar] "b3"
-;              :empty "e"
-;              :none "n"))]
-;    (let [row-strs (for [row board]
-;                     (->>
-;                       row
-;                       (map slot-to-str)
-;                       (string/join \space)))]
-;      (string/join \newline row-strs))))
