@@ -145,16 +145,22 @@
                (rest empty-positions))))))
 
 (defn board-to-str [board]
-  (letfn [(slot-to-str [slot]
-            (case (if (stack? slot) (top-piece slot) slot)
-              [:white :tott] "w1"
-              [:white :tzarra] "w2"
-              [:white :tzaar] "w3"
-              [:black :tott] "b1"
-              [:black :tzarra] "b2"
-              [:black :tzaar] "b3"
-              :empty "e "
-              :nothing "n "))]
+  (letfn [(stack-to-str [stack]
+            (str (if (< 1 (stack-size stack))
+                   (stack-size stack)
+                   \space)
+                 (case (top-piece stack)
+                       [:white :tott] "w1"
+                       [:white :tzarra] "w2"
+                       [:white :tzaar] "w3"
+                       [:black :tott] "b1"
+                       [:black :tzarra] "b2"
+                       [:black :tzaar] "b3")))
+          (slot-to-str [slot]
+            (cond
+              (stack? slot) (stack-to-str slot)
+              (= :empty slot) " e "
+              (= :nothing slot) " n "))]
     (let [row-strs (for [row board]
                      (->>
                        row

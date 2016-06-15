@@ -21,7 +21,8 @@
 (s/def ::piece (s/tuple #{:white :black} core/stack-types))
 (defn piece-color [piece] (first piece))
 (s/def ::stack (s/and (s/+ ::piece)
-                      #(apply = (map piece-color %))))
+                      #(apply = (map piece-color %))
+                      sequential?))
 
 (s/def ::slot-type (s/or :stack ::stack
                          :other #{:empty :nothing}))
