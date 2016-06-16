@@ -5,7 +5,7 @@
 (def ^:private parse-keywords true)
 
 (defmacro ^:private def-json
-  "Takes a name, a set of arguments, and a function
+  "Takes a name, a vector of arguments, and a function
    and generates a function that takes json as input
    parses the json as a map, then threads the keys from the
    map specified in the args-list into the given function in
@@ -13,8 +13,8 @@
 
    (def-json example [key1 key2] test) becomes:
    (defn example [json]
-     (let [apply-f (fn [{:keys [key1 key2]}]
-                     (f key1 key2))
+     (letfn [(apply-f [{:keys [key1 key2]}]
+               (f key1 key2))
        (-> json
          parse-string
          apply-f
@@ -22,10 +22,11 @@
   [name args-list f]
   `(defn ~name
      ~(if (empty? args-list) '[] '[json])
-      (let [apply-f# (fn [{:keys [~@args-list]}]
-                       (~f ~@args-list))]
-        (-> ~(if (empty? args-list) '"{}" 'json)
-            (cheshire/parse-string parse-keywords)
+      (letfn [(apply-f# [{:keys [~@args-list]}]
+                (~f ~@args-list))]
+        (-> ~(if (empty? args-list)
+               '{}
+               '(cheshire/parse-string json parse-keywords))
             apply-f#
             cheshire/generate-string))))
 
