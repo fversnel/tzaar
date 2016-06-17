@@ -4,16 +4,20 @@
            [tzaar.core :as core]))
 
 (defprotocol Player
-  (-play [player color board]))
+  (-play [player color board play-turn]))
 
 (defn play
-  [player color board]
-  {:post [(s/valid? ::spec/turn %)]}
-  (-play player color board))
+  [player color board play-turn]
+  (-play player color board
+         (fn [turn]
+           (if (and (s/valid? ::spec/turn turn)
+                    (core/valid-turn? board color turn))
+             (play-turn turn)
+             (throw (Exception. "Invalid play"))))))
 
 (def random-but-legal-ai
   (reify Player
-    (-play [_ color board]
+    (-play [_ color board play-turn]
       (let [first-move (->> (core/all-moves board color)
                             (filter core/attack-move?)
                             shuffle
@@ -24,4 +28,4 @@
                               shuffle
                               first
                               (or core/pass-move)))]
-        [first-move second-move]))))
+        (play-turn [first-move second-move])))))
