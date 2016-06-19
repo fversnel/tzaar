@@ -11,7 +11,7 @@ public class Api {
 
     public static final tzaar.player.Player COMMAND_LINE_PLAYER =
             (tzaar.player.Player) ClojureLayer.JAVA_API.deref("command-line-player");
-    public static final tzaar.player.Player RANDOM_BUT_LEGAL_PLAYER =
+    public static final tzaar.player.Player RANDOM_BUT_LEGAL_AI =
             (tzaar.player.Player) ClojureLayer.JAVA_API.deref("random-but-legal-ai");
 
     public static void playGame(tzaar.player.Player whitePlayer,
