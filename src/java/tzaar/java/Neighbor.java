@@ -1,4 +1,4 @@
-package tzaar.javaapi;
+package tzaar.java;
 
 public class Neighbor {
     public final Position position;

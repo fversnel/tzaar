@@ -1,18 +1,20 @@
-package tzaar.javaapi;
+package tzaar.java;
+
+import java.util.List;
 
 public class Stack {
-    public final Piece[] pieces;
+    public final List<Piece> pieces;
 
-    public Stack(Piece[] pieces) {
+    public Stack(List<Piece> pieces) {
         this.pieces = pieces;
     }
 
     public Piece topPiece() {
-        return pieces[0];
+        return pieces.get(0);
     }
 
     public int size() {
-        return pieces.length;
+        return pieces.size();
     }
 
     @Override

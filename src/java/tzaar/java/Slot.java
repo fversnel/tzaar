@@ -1,4 +1,4 @@
-package tzaar.javaapi;
+package tzaar.java;
 
 public abstract class Slot {
 
@@ -13,9 +13,9 @@ public abstract class Slot {
     }
 
     public static class Stack extends Slot {
-        public final tzaar.javaapi.Stack stack;
+        public final tzaar.java.Stack stack;
 
-        public Stack(tzaar.javaapi.Stack stack) {
+        public Stack(tzaar.java.Stack stack) {
             this.stack = stack;
         }
 

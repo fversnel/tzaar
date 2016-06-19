@@ -1,4 +1,4 @@
-package tzaar.javaapi;
+package tzaar.java;
 
 public class Piece {
     public enum Type { Tzaar, Tzarra, Tott }

@@ -7,8 +7,17 @@
 
 ; TODO Refactor such that the game state is passed around functions
 ; This makes it easier and clearer to determine which moves are valid
+
 ; {:board initial-board
 ;  :moves []}
+;
+;(defn initial-state [board]
+;  {:ïnitial-board board
+;   :turns []
+;   :current-board board})
+;
+;(defn whos-turn? [{:keys [turns] :as game-state}]
+;  (if (even? (count turns)) :white :black))
 
 (def move-types #{:attack :stack :pass})
 (defn attack-move? [move] (= :attack (:move-type move)))

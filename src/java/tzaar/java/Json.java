@@ -1,4 +1,4 @@
-package tzaar.javaapi;
+package tzaar.java;
 
 import com.google.gson.*;
 
@@ -127,8 +127,8 @@ public class Json {
         @Override
         public JsonElement serialize(Turn turn, Type type, JsonSerializationContext context) {
             JsonArray a = new JsonArray();
-            a.add(context.serialize(turn.FirstMove));
-            a.add(context.serialize(turn.SecondMove));
+            a.add(context.serialize(turn.firstMove));
+            a.add(context.serialize(turn.secondMove));
             return a;
         }
 

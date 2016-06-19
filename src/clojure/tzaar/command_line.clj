@@ -8,25 +8,29 @@
             :as a
             :refer [>! <! go go-loop chan put! alts! timeout]]))
 
-(defn command-line-game [{:keys [players board]}]
+(defn- color-to-str [color]
+  (string/capitalize (name color)))
+
+(defn command-line-game [white-player black-player board]
   (go-loop [board board
             [player-color & colors] (cycle [:white :black])
-            [player & players] (cycle players)]
-    (println (core/board-to-str board))
-    (let [turn-chan (chan 1)]
-      (play
-        player
-        player-color
-        board
-        (fn [turn] (put! turn-chan turn)))
-      (let [turn (<! turn-chan)]
-        (println (str (string/capitalize (name player-color))
-                      " played:"
-                      \newline
-                      (string/join turn \newline)))
-        (recur (core/apply-turn board turn)
-               colors
-               players)))))
+            [player & players] (cycle [white-player black-player])]
+    (if-not (core/lost? board player-color)
+      (let [turn-chan (chan 1)]
+        (play
+          player
+          player-color
+          board
+          (fn [turn] (put! turn-chan turn)))
+        (let [turn (<! turn-chan)]
+          (println (str (color-to-str player-color)
+                        " played:"
+                        \newline
+                        (string/join turn \newline)))
+          (recur (core/apply-turn board turn)
+                 colors
+                 players)))
+      (println (color-to-str player-color) " loses"))))
 
 (def command-line-player
   (reify Player
