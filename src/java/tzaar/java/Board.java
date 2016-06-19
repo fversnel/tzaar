@@ -59,16 +59,14 @@ public class Board {
         return callClojure("apply-move", this, move);
     }
 
-    public boolean hasLost(Color color) {
-        return callClojure("lost?", this, color);
+    public boolean hasLost(Color playerColor) {
+        return callClojure("lost?", this, playerColor);
     }
 
     @Override
     public String toString() {
         return callClojure("board-to-str", this);
     }
-
-
 
     private static <TReturn> TReturn callClojure(String clojureFnName, Object... params) {
         final IFn clojureFn = ClojureLayer.JAVA_API.function(clojureFnName);

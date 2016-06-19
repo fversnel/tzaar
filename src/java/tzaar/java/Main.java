@@ -8,13 +8,11 @@ import static tzaar.java.ClojureLayer.TO_JAVA;
 public class Main {
 
     public static void main(String[] args) {
-        Color c = (Color) TO_JAVA.invoke(Color.class, Keyword.intern(null, "white"));
-        System.out.println(c);
         System.out.println(Api.randomBoard()
             .allMoves(Color.White)
             .stream()
             .findFirst());
-        tzaar.player.Player p = new Player() {
+        final tzaar.player.Player p = new Player() {
             @Override
             public void play(Color color, Board board, Consumer<Turn> playTurn) {
                 final Move.Attack attackMove = board.allMoves(color)
@@ -33,5 +31,7 @@ public class Main {
                 playTurn.accept(new Turn(attackMove, secondMove));
             }
         }.toClojure();
+
+        Api.playGame(p, Api.COMMAND_LINE_PLAYER, Board.random());
     }
 }

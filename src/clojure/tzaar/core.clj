@@ -97,7 +97,7 @@
 (defn moves [board position]
   (if (stack? (lookup board position))
     (let [stack (lookup board position)
-          color (when (stack? stack) (stack-color stack))]
+          color (stack-color stack)]
       (->> (neighbors board position)
            (remove #(= :nothing (:slot %)))
            (map #(assoc {}
@@ -150,10 +150,10 @@
 
 ; Optionally add under which condition the player has lost
 (defn lost?
-  [board color]
-  (let [moves (all-moves board color)
+  [board player-color]
+  (let [moves (all-moves board player-color)
         attack-moves (filter attack-move? moves)]
-    (or (stack-type-missing? board color)
+    (or (stack-type-missing? board player-color)
         (empty? attack-moves))))
 
 (defn random-board []

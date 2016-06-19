@@ -5,7 +5,7 @@ import clojure.lang.IFn;
 import java.util.function.Consumer;
 
 public interface Player {
-    void play(Color color, Board board, Consumer<Turn> playTurn);
+    void play(Color color, Board board, Consumer<Turn> submit);
 
     /**
      * Wraps a typed Java Player implementation such that it
