@@ -1,5 +1,7 @@
 (ns tzaar.javaapi
   (require [tzaar.core :as core]
+           [tzaar.player :as player]
+           [tzaar.command-line :as command-line]
            [clojure.java.data :refer [from-java to-java]]
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
@@ -70,12 +72,14 @@
     (.isEmpty slot) :empty
     (.isNothing slot) :nothing
     :else (from-java (.-stack slot))))
-(defmethod to-java [Slot clojure.lang.IObj]
+(defmethod to-java [Slot clojure.lang.Keyword]
   [_ slot]
-  (condp = slot
+  (case slot
     :empty Slot/Empty
-    :nothing Slot/Nothing
-    :else (Slot$Stack. (to-java Stack slot))))
+    :nothing Slot/Nothing))
+(defmethod to-java [Slot clojure.lang.Sequential]
+  [_ slot]
+  (Slot$Stack. (to-java Stack slot)))
 
 (defmethod from-java Move
   [move]
@@ -110,9 +114,10 @@
     (vec (for [slot row] (from-java slot))))))
 (defmethod to-java [Board clojure.lang.APersistentVector]
   [_ board]
-  (for [row board]
-    (for [slot row]
-      (to-java Slot slot))))
+  (Board.
+    (for [row board]
+      (for [slot row]
+        (to-java Slot slot)))))
 
 (defmacro def-api
   [name return-type java-args f]
@@ -136,5 +141,5 @@
 (def-api random-board Board [] core/random-board)
 (def-api default-board Board [] (fn [] core/default-board))
 
-(def random-but-legal-ai tzaar.player/random-but-legal-ai)
-(def command-line-player tzaar.command-line/command-line-player)
+(def random-but-legal-ai player/random-but-legal-ai)
+(def command-line-player command-line/command-line-player)

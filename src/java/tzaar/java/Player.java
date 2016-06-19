@@ -12,16 +12,13 @@ public interface Player {
      * can be used in the Clojure implementation of Tzaar.
      */
     default tzaar.player.Player toClojure() {
-        final IFn fromJava = ClojureNamespaces.JAVA_CONVERSION.function("from-java");
-        final IFn toJava = ClojureNamespaces.JAVA_CONVERSION.function("to-java");
-
         return new tzaar.player.Player() {
             @Override
             public Object _play(final Object color, final Object board, final Object playTurn) {
                 Player.this.play(
-                        (Color) toJava.invoke(Color.class, color),
-                        (Board) toJava.invoke(Board.class, board),
-                        turn -> ((IFn) playTurn).invoke(fromJava.invoke(turn)));
+                        (Color) ClojureLayer.TO_JAVA.invoke(Color.class, color),
+                        (Board) ClojureLayer.TO_JAVA.invoke(Board.class, board),
+                        turn -> ((IFn) playTurn).invoke(ClojureLayer.FROM_JAVA.invoke(turn)));
                 return null;
             }
 

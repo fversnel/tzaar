@@ -1,7 +1,5 @@
 package tzaar.java;
 
-import tzaar.java.util.ClojureNamespace;
-
 public class Api {
     private Api() { }
 
@@ -12,14 +10,14 @@ public class Api {
     }
 
     public static final tzaar.player.Player COMMAND_LINE_PLAYER =
-            (tzaar.player.Player) ClojureNamespaces.JAVA_API.deref("command-line-player");
+            (tzaar.player.Player) ClojureLayer.JAVA_API.deref("command-line-player");
     public static final tzaar.player.Player RANDOM_BUT_LEGAL_PLAYER =
-            (tzaar.player.Player) ClojureNamespaces.JAVA_API.deref("random-but-legal-ai");
+            (tzaar.player.Player) ClojureLayer.JAVA_API.deref("random-but-legal-ai");
 
     public static void playGame(tzaar.player.Player whitePlayer,
                                 tzaar.player.Player blackPlayer,
                                 Board board) {
-        ClojureNamespaces.COMMAND_LINE.function("command-line-game")
+        ClojureLayer.COMMAND_LINE.function("command-line-game")
                 .invoke(whitePlayer, blackPlayer, board);
     }
 }

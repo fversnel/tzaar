@@ -12,6 +12,8 @@ public abstract class Slot {
         return this == Nothing;
     }
 
+    public boolean isStack() {return this != Empty && this != Nothing; }
+
     public static class Stack extends Slot {
         public final tzaar.java.Stack stack;
 

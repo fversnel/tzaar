@@ -2,7 +2,6 @@ package tzaar.java;
 
 import clojure.lang.ArraySeq;
 import clojure.lang.IFn;
-import tzaar.java.util.ClojureNamespace;
 
 import java.util.*;
 
@@ -44,6 +43,10 @@ public class Board {
         return callClojure("moves", this, position);
     }
 
+    public Collection<Move> attackMoves(Position position) {
+        return callClojure("attack-moves", this, position);
+    }
+
     public Collection<Move> allMoves(Color color) {
         return callClojure("all-moves", this, color);
     }
@@ -68,7 +71,7 @@ public class Board {
 
 
     private static <TReturn> TReturn callClojure(String clojureFnName, Object... params) {
-        final IFn clojureFn = ClojureNamespaces.JAVA_API.function(clojureFnName);
+        final IFn clojureFn = ClojureLayer.JAVA_API.function(clojureFnName);
         return (TReturn) clojureFn.applyTo(ArraySeq.create(params));
     }
 }
