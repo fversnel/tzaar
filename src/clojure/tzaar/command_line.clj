@@ -14,7 +14,7 @@
   (let [[column-char row] coordinate-str
         column (- (-> column-char string/lower-case first int)
                   (int \a))]
-    [(Integer/parseInt (str row)) column]))
+    [column (Integer/parseInt (str row))]))
 
 (defn- position-to-coordinate [[x y]]
   (let [column (string/upper-case (char (+ x (int \a))))]
@@ -65,36 +65,35 @@
     (<!! done-chan)))
 
 (def command-line-player
-  (reify tzaar.player/Player
-    (-play [_ color board first-turn? play-turn]
-      (println (color-to-str color) "to play:")
-      (let [validate-move (fn [board move]
-                            (if (core/valid-move? board color move)
-                              move
-                              (throw (Exception. "Invalid move"))))
-            parse-move (fn [expr]
-                         (let [[move-type from to] (string/split expr #"\s+")]
-                         {:move-type (keyword move-type)
-                          :from (coordinate-to-position from)
-                          :to (coordinate-to-position to)}))
-            parse-attack (fn [expr]
-                           (let [[from to] (string/split expr #"\s+")]
-                             {:move-type :attack
-                              :from (coordinate-to-position from)
-                              :to (coordinate-to-position to)}))
-            attack-move (try-repeatedly
-                          (print "Attack move => ")
-                          (->> (read-line)
-                               parse-attack
-                               (validate-move board))
-                          :on-failure (println "Wrong input, try again"))
-            board-after-attack (core/apply-move board attack-move)
-            second-move (if-not first-turn?
-                          (try-repeatedly
-                            (print "Second move => ")
+  (letfn [(parse-move [expr] ; Parses "attack A1 A2"
+            (let [[move-type from to] (-> expr
+                                          string/trim-newline
+                                          (string/split #"\s+"))]
+              {:move-type (keyword move-type)
+               :from (coordinate-to-position from)
+               :to (coordinate-to-position to)}))]
+    (reify tzaar.player/Player
+      (-play [_ color board first-turn? play-turn]
+        (println (color-to-str color) "to play: (Example: 'attack a0 a1')")
+        (let [validate-move (fn [board first-turn-move? move]
+                              (if (core/valid-move? board color first-turn-move? move)
+                                move
+                                (throw (Exception. "Invalid move"))))
+              attack-move (try-repeatedly
+                            (print "Attack move=> ")
+                            (flush)
                             (->> (read-line)
                                  parse-move
-                                 (validate-move board-after-attack))
+                                 (validate-move board true))
                             :on-failure (println "Wrong input, try again"))
-                          core/pass-move)]
-        (play-turn [attack-move second-move])))))
+              board-after-attack (core/apply-move board attack-move)
+              second-move (if-not first-turn?
+                            (try-repeatedly
+                              (print "Second move=> ")
+                              (flush)
+                              (->> (read-line)
+                                   parse-move
+                                   (validate-move board-after-attack false))
+                              :on-failure (println "Wrong input, try again"))
+                            core/pass-move)]
+          (play-turn [attack-move second-move]))))))

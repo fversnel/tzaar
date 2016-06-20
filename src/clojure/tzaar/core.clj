@@ -62,7 +62,6 @@
           new-stack (case move-type
                       :attack from-stack
                       :stack (concat from-stack to-stack))]
-      ;(println move-type from-stack to-stack new-stack)
       (-> board
           (update-position from :empty)
           (update-position to new-stack)))
@@ -135,9 +134,10 @@
        (map :position)
        (mapcat #(moves board %))))
 
-(defn valid-move? [board color move]
+(defn valid-move? [board color first-turn-move? move]
   (if-not (pass-move? move)
     (and ((moves board (:from move)) move)
+         (or (not first-turn-move?) (attack-move? move))
          (= color (stack-color (lookup board (:from move)))))
     true))
 
@@ -150,10 +150,9 @@
 (defn valid-turn?
   [board color first-turn? [first-move second-move]]
   (and
-    (attack-move? first-move)
-    (valid-move? board color first-move)
+    (valid-move? board color true first-move)
     (if first-turn? (pass-move? second-move) true)
-    (valid-move? (apply-move board first-move) color second-move)))
+    (valid-move? (apply-move board first-move) color false second-move)))
 
 ; Optionally add under which condition the player has lost
 (defn lost?
