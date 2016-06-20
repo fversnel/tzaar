@@ -13,6 +13,9 @@ gets called all necessary game state gets passed into it.
 You are of course allowed to use state for purposes of machine learning or anything
 else other than tracking individual game progress.
 
+Note that the thread calling `play` does not have to be the same
+thread each time.
+
 ### From Clojure
 
 Implementing a new player (human or AI):

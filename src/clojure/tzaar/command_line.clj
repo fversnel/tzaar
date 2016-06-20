@@ -5,7 +5,7 @@
            [clojure.string :as string]
            [clojure.core.async
             :as a
-            :refer [>! <! go go-loop chan put! alts! timeout]]))
+            :refer [>! <! <!! go go-loop chan put! alts! timeout]]))
 
 (defn- color-to-str [color]
   (string/capitalize (name color)))
@@ -31,31 +31,35 @@
     :pass "passes"))
 
 (defn command-line-game [white-player black-player board]
-  (go-loop [board board
-            [player-color & colors] (cycle [:white :black])
-            [player & players] (cycle [white-player black-player])
-            first-turn? true
-            turn-count 0]
-    (println (core/board-to-str board))
-    (if-not (core/lost? board player-color)
-      (do
-        (let [turn-chan (chan 1)]
-          (play
-            player
-            player-color
-            board
-            first-turn?
-            (fn [turn] (put! turn-chan turn)))
-          (let [turn (<! turn-chan)]
-            (println (color-to-str player-color)
-                     "plays"
-                     (string/join ", then " (map move-to-str turn)))
-            (recur (core/apply-turn board turn)
-                   colors
-                   players
-                   false
-                   (inc turn-count)))))
-      (println (color-to-str player-color) "loses after" turn-count "turns"))))
+  (let [done-chan (chan)]
+    (go-loop [board board
+              [player-color & colors] (cycle [:white :black])
+              [player & players] (cycle [white-player black-player])
+              first-turn? true
+              turn-count 0]
+      (println (core/board-to-str board))
+      (if-not (core/lost? board player-color)
+        (do
+          (let [turn-chan (chan 1)]
+            (play
+              player
+              player-color
+              board
+              first-turn?
+              (fn [turn] (put! turn-chan turn)))
+            (let [turn (<! turn-chan)]
+              (println (color-to-str player-color)
+                       "plays"
+                       (string/join ", then " (map move-to-str turn)))
+              (recur (core/apply-turn board turn)
+                     colors
+                     players
+                     false
+                     (inc turn-count)))))
+        (do
+          (println (color-to-str player-color) "loses after" turn-count "turns")
+          (>! done-chan true))))
+    (<!! done-chan)))
 
 (def command-line-player
   (reify tzaar.player/Player
