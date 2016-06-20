@@ -82,7 +82,7 @@
                                (validate-move board))
                           :on-failure (println "Wrong input, try again"))
             board-after-attack (core/apply-move board attack-move)
-            second-move (if first-turn?
+            second-move (if-not first-turn?
                           (try-repeatedly
                             (print "Second move => ")
                             (->> (read-line)
