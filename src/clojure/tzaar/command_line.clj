@@ -11,14 +11,22 @@
   (string/capitalize (name color)))
 
 (defn- coordinate-to-position [coordinate-str]
-  (let [[column-char row] coordinate-str
-        column (- (-> column-char string/lower-case first int)
-                  (int \a))]
-    [column (Integer/parseInt (str (- row 1)))]))
+  (let [[column-char row-char] coordinate-str
+        x (-> column-char
+              string/lower-case
+              first
+              int
+              (- (int \a)))
+        y (-> row-char
+              str
+              Integer/parseInt
+              (- 1))]
+    [x y]))
 
 (defn- position-to-coordinate [[x y]]
-  (let [column (string/upper-case (char (+ x (int \a))))]
-    (str column (+ y 1))))
+  (let [column (string/upper-case (char (+ x (int \a))))
+        row (+ y 1)]
+    (str column row)))
 
 (defn- move-to-str [move]
   (case (:move-type move)
@@ -75,7 +83,7 @@
                :to (coordinate-to-position to)}))]
     (reify tzaar.player/Player
       (-play [_ color board first-turn? play-turn]
-        (println (color-to-str color) "to play: (Example: 'attack a0 a1')")
+        (println (color-to-str color) "to play: (example: 'attack a1 a2')")
         (let [validate-move (fn [board first-turn-move? move]
                               (if (core/valid-move? board color first-turn-move? move)
                                 move

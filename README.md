@@ -6,14 +6,13 @@ Clojure implementation of the abstract strategy game Tzaar by Kris Burm
 
 You can play tzaar from Clojure and from Java.
 
-The player implementation should not keep track of the game state.
+You can create your own AI by implementing the `Player` interface.
+Your implementation should not keep track of the game state.
 The game should be able to re-use your AI instance for other games as well.
 When the `play` method on your AI
 gets called all necessary game state gets passed into it.
 You are of course allowed to use state for purposes of machine learning or anything
-else other than tracking individual game progress.
-
-Note that the thread calling `play` does not have to be the same
+else other than tracking individual game progress. Note that the thread calling `play` on the `Player` does not have to be the same
 thread each time.
 
 ### From Clojure
@@ -57,9 +56,9 @@ public class YourAI implements tzaar.java.Player {
 
 Starting a game:
 ```java
-Api.playGame(Api.RANDOM_BUT_LEGAL_AI,
-        new YourAI().toClojure(),
-        Board.random());
+final Player whitePlayer = Api.RANDOM_BUT_LEGAL_AI;
+final Player blackPlayer = new YourAI().toClojure();
+Api.playGame(whitePlayer, blackPlayer, Api.randomBoard());
 ```
 
 ## License

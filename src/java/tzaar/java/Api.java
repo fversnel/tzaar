@@ -3,7 +3,9 @@ package tzaar.java;
 public class Api {
     private Api() { }
 
-    public static final Board DEFAULT_BOARD = Board.standard();
+    public static Board defaultBoard() {
+        return Board.standard();
+    }
 
     public static Board randomBoard() {
         return Board.random();
@@ -17,7 +19,7 @@ public class Api {
     public static Color playGame(tzaar.player.Player whitePlayer,
                                 tzaar.player.Player blackPlayer,
                                 Board board) {
-        Object winner = ClojureLayer.COMMAND_LINE.function("command-line-game")
+        final Object winner = ClojureLayer.COMMAND_LINE.function("command-line-game")
                 .invoke(whitePlayer,
                         blackPlayer,
                         ClojureLayer.FROM_JAVA.invoke(board));
