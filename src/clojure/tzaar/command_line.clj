@@ -30,13 +30,15 @@
                 (position-to-coordinate (:to move)))
     :pass "passes"))
 
+(defn- flip-color [color]
+  (if (= color :white) :black :white))
+
 (defn command-line-game [white-player black-player board]
   (let [done-chan (chan)]
     (go-loop [board board
               [player-color & colors] (cycle [:white :black])
               [player & players] (cycle [white-player black-player])
-              first-turn? true
-              turn-count 0]
+              turns []]
       (println (core/board-to-str board))
       (if-not (core/lost? board player-color true)
         (do
@@ -45,7 +47,7 @@
               player
               player-color
               board
-              first-turn?
+              (empty? turns)
               (fn [turn] (put! turn-chan turn)))
             (let [turn (<! turn-chan)]
               (println (color-to-str player-color)
@@ -54,17 +56,18 @@
               (recur (core/apply-turn board turn)
                      colors
                      players
-                     false
-                     (inc turn-count)))))
+                     (conj turns turn)))))
         (do
-          (println (color-to-str player-color) "loses after" turn-count "turns")
-          (>! done-chan true))))
+          (let [winner (flip-color player-color)]
+            (println (color-to-str winner)
+                     "wins after" (count turns) "turns")
+            (>! done-chan winner)))))
     (<!! done-chan)))
 
 (def command-line-player
   (reify tzaar.player/Player
     (-play [_ color board first-turn? play-turn]
-      (println (string/capitalize (name color)) " to play:")
+      (println (color-to-str color) "to play:")
       (let [validate-move (fn [board move]
                             (if (core/valid-move? board color move)
                               move
