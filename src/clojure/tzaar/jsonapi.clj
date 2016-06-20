@@ -45,7 +45,7 @@
 (defn-json all-moves [board color] core/all-moves)
 (defn-json apply-move [board move] core/apply-move)
 (defn-json board-to-str [board] core/board-to-str)
-(defn-json lost? [board player-color] core/lost?)
+(defn-json lost? [board player-color first-turn-move?] core/lost?)
 
 (defn-json random-board [] core/random-board)
 (def default-board (cheshire/generate-string core/default-board))

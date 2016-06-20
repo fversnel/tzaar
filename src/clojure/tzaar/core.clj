@@ -157,11 +157,11 @@
 
 ; Optionally add under which condition the player has lost
 (defn lost?
-  [board player-color]
+  [board player-color first-turn-move?]
   (let [moves (all-moves board player-color)
         attack-moves (filter attack-move? moves)]
     (or (stack-type-missing? board player-color)
-        (empty? attack-moves))))
+        (and first-turn-move? (empty? attack-moves)))))
 
 (defn random-board []
   (let [color-stacks (fn [color] (map #(single-stack color %)

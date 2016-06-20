@@ -38,7 +38,7 @@
               first-turn? true
               turn-count 0]
       (println (core/board-to-str board))
-      (if-not (core/lost? board player-color)
+      (if-not (core/lost? board player-color true)
         (do
           (let [turn-chan (chan 1)]
             (play

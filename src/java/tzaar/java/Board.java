@@ -59,8 +59,8 @@ public class Board {
         return callClojure("apply-move", this, move);
     }
 
-    public boolean hasLost(Color playerColor) {
-        return callClojure("lost?", this, playerColor);
+    public boolean hasLost(Color playerColor, boolean isFirstMoveOfTurn) {
+        return callClojure("lost?", this, playerColor, isFirstMoveOfTurn);
     }
 
     @Override

@@ -34,7 +34,7 @@ Starting a game:
 (require [tzaar.player :as player]
          [tzaar.command-line :refer :all])
 (command-line-game player/random-but-legal-ai
-                   player/random-but-legal-ai
+                   your-ai
                    core/default-board)
 ```
 
