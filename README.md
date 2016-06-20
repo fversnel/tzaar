@@ -42,7 +42,7 @@ Implementing a new player:
 ```java
 public class YourAI implements tzaar.java.Player {
     @Override
-    public void play(Color color,
+    public void play(Color playerColor,
                      Board board,
                      boolean isFirstTurn,
                      Consumer<Turn> playTurn) {
