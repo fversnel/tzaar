@@ -14,11 +14,11 @@
   (let [[column-char row] coordinate-str
         column (- (-> column-char string/lower-case first int)
                   (int \a))]
-    [column (Integer/parseInt (str row))]))
+    [column (Integer/parseInt (str (- row 1)))]))
 
 (defn- position-to-coordinate [[x y]]
   (let [column (string/upper-case (char (+ x (int \a))))]
-    (str column y)))
+    (str column (+ y 1))))
 
 (defn- move-to-str [move]
   (case (:move-type move)
@@ -39,7 +39,7 @@
               [player-color & colors] (cycle [:white :black])
               [player & players] (cycle [white-player black-player])
               turns []]
-      (println (core/board-to-str board))
+      (println (core/board-to-str board) \newline)
       (if-not (core/lost? board player-color true)
         (do
           (let [turn-chan (chan 1)]
@@ -50,7 +50,8 @@
               (empty? turns)
               (fn [turn] (put! turn-chan turn)))
             (let [turn (<! turn-chan)]
-              (println (color-to-str player-color)
+              (println "Turn" (str (inc (count turns)) ":")
+                       (color-to-str player-color)
                        "plays"
                        (string/join ", then " (map move-to-str turn)))
               (recur (core/apply-turn board turn)

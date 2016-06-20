@@ -184,8 +184,6 @@
                (rest stacks)
                (rest empty-positions))))))
 
-
-
 (defn board-to-str [board]
   (letfn [(stack-to-str [stack]
             (str (if (< 1 (stack-size stack))
@@ -214,7 +212,7 @@
                      (->> (get board row-index)
                        (map slot-to-str)
                        (string/join \space)
-                       (str row-index "  ")))]
+                       (str (+ row-index 1) "  ")))]
       (str
         (str "   " (string/join \space column-indices))
         \newline

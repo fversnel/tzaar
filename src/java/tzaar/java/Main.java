@@ -4,8 +4,8 @@ public class Main {
 
     public static void main(String[] args) {
         Color winner = Api.playGame(
-                Api.COMMAND_LINE_PLAYER,
-                new ExamplePlayer().toClojure(),
-                Board.random());
+                Api.RANDOM_BUT_LEGAL_AI,
+                Api.RANDOM_BUT_LEGAL_AI,
+                Api.DEFAULT_BOARD);
     }
 }
