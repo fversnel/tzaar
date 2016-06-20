@@ -88,8 +88,8 @@
     :else {:move-type (cond
                         (.isAttack move) :attack
                         (.isStack move) :stack)
-           :from      (.-from move)
-           :to        (.-to move)}))
+           :from      (from-java (.-from move))
+           :to        (from-java (.-to move))}))
 (defmethod to-java [Move clojure.lang.APersistentMap]
   [_ move]
   (condp = (:move-type move)

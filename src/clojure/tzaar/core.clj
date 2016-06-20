@@ -1,6 +1,7 @@
 (ns tzaar.core
   (require [tzaar.parser :as parser]
-           [clojure.string :as string]))
+           [clojure.string :as string]
+           [clojure.edn :as edn]))
 
 (def empty-board (parser/read-board "empty-board"))
 (def default-board (parser/read-board "default-board"))
@@ -55,14 +56,17 @@
 
 (defn apply-move
   [board {:keys [from to move-type] :as move}]
-  (let [from-stack (lookup board from)
-        to-stack (lookup board to)
-        new-stack (case move-type
-                    :attack from-stack
-                    :stack (concat from-stack to-stack))]
-    (-> board
-        (update-position from :empty)
-        (update-position to new-stack))))
+  (if-not (pass-move? move)
+    (let [from-stack (lookup board from)
+          to-stack (lookup board to)
+          new-stack (case move-type
+                      :attack from-stack
+                      :stack (concat from-stack to-stack))]
+      ;(println move-type from-stack to-stack new-stack)
+      (-> board
+          (update-position from :empty)
+          (update-position to new-stack)))
+    board))
 
 (defn stack-type-missing?
   [board color]
@@ -138,14 +142,17 @@
     true))
 
 (defn apply-turn
-  [board turn]
-  (reduce apply-move board turn))
+  [board [first-move second-move]]
+  (-> board
+      (apply-move first-move)
+      (apply-move second-move)))
 
 (defn valid-turn?
-  [board color [first-move second-move]]
+  [board color first-turn? [first-move second-move]]
   (and
-    (= (:move-type first-move) :attack)
+    (attack-move? first-move)
     (valid-move? board color first-move)
+    (if first-turn? (pass-move? second-move) true)
     (valid-move? (apply-move board first-move) color second-move)))
 
 ; Optionally add under which condition the player has lost
@@ -178,6 +185,8 @@
                (rest stacks)
                (rest empty-positions))))))
 
+
+
 (defn board-to-str [board]
   (letfn [(stack-to-str [stack]
             (str (if (< 1 (stack-size stack))
@@ -195,9 +204,19 @@
               (stack? slot) (stack-to-str slot)
               (= :empty slot) " e "
               (= :nothing slot) " n "))]
-    (let [row-strs (for [row board]
-                     (->>
-                       row
+    (let [column-indices (->> \a
+                              int
+                              (iterate inc)
+                              (map (comp #(str " " % " ")
+                                         string/capitalize
+                                         char))
+                              (take (count board)))
+          row-strs (for [row-index (range (count board))]
+                     (->> (get board row-index)
                        (map slot-to-str)
-                       (string/join \space)))]
-      (string/join \newline row-strs))))
+                       (string/join \space)
+                       (str row-index "  ")))]
+      (str
+        (str "   " (string/join \space column-indices))
+        \newline
+        (string/join \newline row-strs)))))

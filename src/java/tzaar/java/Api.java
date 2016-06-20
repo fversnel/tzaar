@@ -18,6 +18,8 @@ public class Api {
                                 tzaar.player.Player blackPlayer,
                                 Board board) {
         ClojureLayer.COMMAND_LINE.function("command-line-game")
-                .invoke(whitePlayer, blackPlayer, board);
+                .invoke(whitePlayer,
+                        blackPlayer,
+                        ClojureLayer.FROM_JAVA.invoke(board));
     }
 }
