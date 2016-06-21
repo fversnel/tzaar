@@ -2,10 +2,12 @@
   (require [tzaar.core :as core]
            [tzaar.util :refer [try-repeatedly]]
            [tzaar.player :refer [play]]
+           [tzaar.logger :refer [logln log]]
            [clojure.string :as string]
            [clojure.core.async
             :as a
-            :refer [>! <! <!! go go-loop chan put! alts! timeout]]))
+            :refer [>! <! <!! go go-loop chan put! alts! timeout]])
+  (:import (tzaar.logger Logger)))
 
 (defn- color-to-str [color]
   (string/capitalize (name color)))
@@ -41,13 +43,14 @@
 (defn- flip-color [color]
   (if (= color :white) :black :white))
 
-(defn command-line-game [white-player black-player board]
+(defn command-line-game
+  [white-player black-player board ^Logger l]
   (let [done-chan (chan)]
     (go-loop [board board
               [player-color & colors] (cycle [:white :black])
               [player & players] (cycle [white-player black-player])
               turns []]
-      (println (core/board-to-str board) \newline)
+      (logln l (core/board-to-str board) \newline)
       (if-not (core/lost? board player-color true)
         (do
           (let [turn-chan (chan 1)]
@@ -58,17 +61,18 @@
               (empty? turns)
               (fn [turn] (put! turn-chan turn)))
             (let [turn (<! turn-chan)]
-              (println "Turn" (str (inc (count turns)) ":")
-                       (color-to-str player-color)
-                       "plays"
-                       (string/join ", then " (map move-to-str turn)))
+              (logln l
+                     "Turn" (str (inc (count turns)) ":")
+                     (color-to-str player-color)
+                     "plays"
+                     (string/join ", then " (map move-to-str turn)))
               (recur (core/apply-turn board turn)
                      colors
                      players
                      (conj turns turn)))))
         (do
           (let [winner (flip-color player-color)]
-            (println (color-to-str winner)
+            (logln l (color-to-str winner)
                      "wins after" (count turns) "turns")
             (>! done-chan winner)))))
     (<!! done-chan)))

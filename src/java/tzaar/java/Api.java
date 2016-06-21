@@ -1,12 +1,21 @@
 package tzaar.java;
 
+import tzaar.logger.Logger;
+
+import static tzaar.java.ClojureLayer.FROM_JAVA;
+import static tzaar.java.ClojureLayer.COMMAND_LINE;
+import static tzaar.java.ClojureLayer.TO_JAVA;
+import static tzaar.java.ClojureLayer.LOGGER;
+
 public class Api {
     private Api() { }
+
+    public static final Logger SYSTEM_OUT_LOGGER = (Logger) LOGGER.deref("system-out-logger");
+    public static final Logger NO_OP_LOGGER = (Logger) LOGGER.deref("no-op-logger");
 
     public static Board defaultBoard() {
         return Board.standard();
     }
-
     public static Board randomBoard() {
         return Board.random();
     }
@@ -19,10 +28,18 @@ public class Api {
     public static Color playGame(final tzaar.player.Player whitePlayer,
                                  final tzaar.player.Player blackPlayer,
                                  final Board board) {
-        final Object winner = ClojureLayer.COMMAND_LINE.function("command-line-game")
+        return playGame(whitePlayer, blackPlayer, board, SYSTEM_OUT_LOGGER);
+    }
+
+    public static Color playGame(final tzaar.player.Player whitePlayer,
+                                 final tzaar.player.Player blackPlayer,
+                                 final Board board,
+                                 final Logger logger) {
+        final Object winner = COMMAND_LINE.function("command-line-game")
                 .invoke(whitePlayer,
                         blackPlayer,
-                        ClojureLayer.FROM_JAVA.invoke(board));
-        return (Color) ClojureLayer.TO_JAVA.invoke(Color.class, winner);
+                        FROM_JAVA.invoke(board),
+                        logger);
+        return (Color) TO_JAVA.invoke(Color.class, winner);
     }
 }
