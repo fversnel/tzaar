@@ -1,7 +1,6 @@
 (ns tzaar.javaapi
   (require [tzaar.core :as core]
            [tzaar.player :as player]
-           [tzaar.command-line :as command-line]
            [clojure.java.data :refer [from-java to-java]]
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
@@ -148,4 +147,4 @@
 (def-api default-board Board [] (fn [] core/default-board))
 
 (def random-but-legal-ai player/random-but-legal-ai)
-(def command-line-player command-line/command-line-player)
+(def command-line-player player/command-line-player)

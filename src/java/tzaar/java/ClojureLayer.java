@@ -7,8 +7,8 @@ public class ClojureLayer {
     private ClojureLayer() {}
 
     public static final ClojureNamespace JAVA_API = new ClojureNamespace("tzaar.javaapi");
-    public static final ClojureNamespace COMMAND_LINE = new ClojureNamespace("tzaar.command-line");
-    public static final ClojureNamespace LOGGER = new ClojureNamespace("tzaar.logger");
+    public static final ClojureNamespace GAME = new ClojureNamespace("tzaar.game");
+    public static final ClojureNamespace LOGGING = new ClojureNamespace("tzaar.util.logging");
 
     private static final ClojureNamespace JAVA_CONVERSION = new ClojureNamespace("clojure.java.data");
     public static final IFn FROM_JAVA = JAVA_CONVERSION.function("from-java");

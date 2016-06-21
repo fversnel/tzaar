@@ -1,4 +1,4 @@
-(ns tzaar.util)
+(ns tzaar.util.macros)
 
 (defmacro try-repeatedly
   [& body]

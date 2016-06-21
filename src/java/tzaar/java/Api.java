@@ -1,17 +1,14 @@
 package tzaar.java;
 
-import tzaar.logger.Logger;
+import tzaar.util.logging.Logger;
 
-import static tzaar.java.ClojureLayer.FROM_JAVA;
-import static tzaar.java.ClojureLayer.COMMAND_LINE;
-import static tzaar.java.ClojureLayer.TO_JAVA;
-import static tzaar.java.ClojureLayer.LOGGER;
+import static tzaar.java.ClojureLayer.*;
 
 public class Api {
     private Api() { }
 
-    public static final Logger SYSTEM_OUT_LOGGER = (Logger) LOGGER.deref("system-out-logger");
-    public static final Logger NO_OP_LOGGER = (Logger) LOGGER.deref("no-op-logger");
+    public static final Logger SYSTEM_OUT_LOGGER = (Logger) LOGGING.deref("system-out-logger");
+    public static final Logger NO_OP_LOGGER = (Logger) LOGGING.deref("no-op-logger");
 
     public static Board defaultBoard() {
         return Board.standard();
@@ -35,7 +32,7 @@ public class Api {
                                  final tzaar.player.Player blackPlayer,
                                  final Board board,
                                  final Logger logger) {
-        final Object winner = COMMAND_LINE.function("command-line-game")
+        final Object winner = GAME.function("play-game")
                 .invoke(whitePlayer,
                         blackPlayer,
                         FROM_JAVA.invoke(board),

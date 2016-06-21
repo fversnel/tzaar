@@ -220,3 +220,6 @@
         (str "   " (string/join \space column-indices))
         \newline
         (string/join \newline row-strs)))))
+
+(defn color-to-str [color]
+  (string/capitalize (name color)))
