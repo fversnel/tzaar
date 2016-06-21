@@ -36,23 +36,25 @@
 (defn stack-type [stack] (second (top-piece stack)))
 (defn stack-size [stack] (count stack))
 
-(defn update-position [board [x y] new-slot]
+(defn update-position [board [^int x ^int y] new-slot]
   (assoc-in board [y x] new-slot))
 
-(defn lookup [board [x y]]
+(defn lookup [board [^int x ^int y]]
   (or (get-in board [y x]) :nothing))
 
 (defn iterate-slots [board]
-  (for [y (range 0 (count board))
-        x (range 0 (count (nth board y)))]
-    {:position [x y]
-     :slot (lookup board [x y])}))
+  (for [y (range (count board))
+        x (range (count (nth board y)))
+        :let [position [x y]]]
+    {:slot (lookup board position)
+     :position position}))
 
 (defn iterate-stacks [color board]
   (->> board
        iterate-slots
-       (filter #(and (stack? (:slot %))
-                     (stack-color? color (:slot %))))))
+       (filter (fn [{:keys [slot]}]
+                 (and (stack? slot)
+                      (stack-color? color slot))))))
 
 (defn apply-move
   [board {:keys [from to move-type] :as move}]
@@ -76,7 +78,7 @@
     (not= stack-types (set stacks))))
 
 (defn neighbors [board position]
-  (letfn [(neighbor [{:keys [xfn yfn]}]
+  (letfn [(neighbor [xfn yfn]
             (let [positions (iterate (fn [[x y]] [(xfn x) (yfn y)])
                                      position)]
               (->> positions
@@ -86,16 +88,16 @@
                    (remove #(= :empty (:slot %)))
                    first)))]
     [; Horizontal
-      (neighbor {:xfn inc :yfn identity})
-      (neighbor {:xfn dec :yfn identity})
+      (neighbor inc identity)
+      (neighbor dec identity)
 
       ; Vertical
-      (neighbor {:xfn identity :yfn inc})
-      (neighbor {:xfn identity :yfn dec})
+      (neighbor identity inc)
+      (neighbor identity dec)
 
       ; Diagonal
-      (neighbor {:xfn dec :yfn dec})
-      (neighbor {:xfn inc :yfn inc})]))
+      (neighbor dec dec)
+      (neighbor inc inc)]))
 
 (defn moves [board position]
   (if (stack? (lookup board position))
@@ -134,7 +136,8 @@
        (map :position)
        (mapcat #(moves board %))))
 
-(defn valid-move? [board color first-turn-move? move]
+(defn valid-move?
+  [board color first-turn-move? move]
   (if-not (pass-move? move)
     (and ((moves board (:from move)) move)
          (or (not first-turn-move?) (attack-move? move))
