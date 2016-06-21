@@ -17,7 +17,7 @@ public abstract class Slot {
     public static class Stack extends Slot {
         public final tzaar.java.Stack stack;
 
-        public Stack(tzaar.java.Stack stack) {
+        public Stack(final tzaar.java.Stack stack) {
             this.stack = stack;
         }
 

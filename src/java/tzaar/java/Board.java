@@ -8,15 +8,15 @@ import java.util.*;
 public class Board {
     public final List<List<Slot>> slots;
 
-    public Board(List<List<Slot>> slots) {
+    public Board(final List<List<Slot>> slots) {
         this.slots = slots;
     }
 
-    public Slot lookup(int x, int y) {
+    public Slot lookup(final int x, final int y) {
         return lookup(new Position(x, y));
     }
 
-    public Slot lookup(Position position) {
+    public Slot lookup(final Position position) {
         final Slot s;
         if(0 <= position.y && position.y < slots.size()) {
             final List<Slot> row = slots.get(position.y);
@@ -39,27 +39,27 @@ public class Board {
         return callClojure("random-board");
     }
 
-    public Collection<Move> moves(Position position) {
+    public Collection<Move> moves(final Position position) {
         return callClojure("moves", this, position);
     }
 
-    public Collection<Move> attackMoves(Position position) {
+    public Collection<Move> attackMoves(final Position position) {
         return callClojure("attack-moves", this, position);
     }
 
-    public Collection<Move> allMoves(Color color) {
+    public Collection<Move> allMoves(final Color color) {
         return callClojure("all-moves", this, color);
     }
 
-    public Collection<Neighbor> neighbors(Position position) {
+    public Collection<Neighbor> neighbors(final Position position) {
         return callClojure("neighbors", this, position);
     }
 
-    public Board applyMove(Move move) {
+    public Board applyMove(final Move move) {
         return callClojure("apply-move", this, move);
     }
 
-    public boolean hasLost(Color playerColor, boolean isFirstMoveOfTurn) {
+    public boolean hasLost(final Color playerColor, final boolean isFirstMoveOfTurn) {
         return callClojure("lost?", this, playerColor, isFirstMoveOfTurn);
     }
 
@@ -68,7 +68,8 @@ public class Board {
         return callClojure("board-to-str", this);
     }
 
-    private static <TReturn> TReturn callClojure(String clojureFnName, Object... params) {
+    private static <TReturn> TReturn callClojure(final String clojureFnName,
+                                                 final Object... params) {
         final IFn clojureFn = ClojureLayer.JAVA_API.function(clojureFnName);
         return (TReturn) clojureFn.applyTo(ArraySeq.create(params));
     }

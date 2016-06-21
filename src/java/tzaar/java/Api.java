@@ -16,9 +16,9 @@ public class Api {
     public static final tzaar.player.Player RANDOM_BUT_LEGAL_AI =
             (tzaar.player.Player) ClojureLayer.JAVA_API.deref("random-but-legal-ai");
 
-    public static Color playGame(tzaar.player.Player whitePlayer,
-                                tzaar.player.Player blackPlayer,
-                                Board board) {
+    public static Color playGame(final tzaar.player.Player whitePlayer,
+                                 final tzaar.player.Player blackPlayer,
+                                 final Board board) {
         final Object winner = ClojureLayer.COMMAND_LINE.function("command-line-game")
                 .invoke(whitePlayer,
                         blackPlayer,

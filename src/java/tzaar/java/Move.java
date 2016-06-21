@@ -14,7 +14,7 @@ public abstract class Move {
         public Position from;
         public Position to;
 
-        public Attack(Position from, Position to) {
+        public Attack(final Position from, final Position to) {
             this.from = from;
             this.to = to;
         }
@@ -39,7 +39,7 @@ public abstract class Move {
         public Position from;
         public Position to;
 
-        public Stack(Position from, Position to) {
+        public Stack(final Position from, final Position to) {
             this.from = from;
             this.to = to;
         }

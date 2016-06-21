@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 
 public class ExamplePlayer implements Player {
     @Override
-    public void play(Color playerColor, Board board,
-                     boolean isFirstTurn, Consumer<Turn> playTurn) {
+    public void play(final Color playerColor, final Board board,
+                     final boolean isFirstTurn, final Consumer<Turn> playTurn) {
         final Move.Attack attackMove = board.allMoves(playerColor)
                 .stream()
                 .filter(Move::isAttack)

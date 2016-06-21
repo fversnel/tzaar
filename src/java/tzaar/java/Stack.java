@@ -5,7 +5,7 @@ import java.util.List;
 public class Stack {
     public final List<Piece> pieces;
 
-    public Stack(List<Piece> pieces) {
+    public Stack(final List<Piece> pieces) {
         this.pieces = pieces;
     }
 

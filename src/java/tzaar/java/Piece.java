@@ -6,7 +6,7 @@ public class Piece {
     public final Color color;
     public final Type type;
 
-    public Piece(Color color, Piece.Type type) {
+    public Piece(final Color color, final Piece.Type type) {
         this.color = color;
         this.type = type;
     }

@@ -4,7 +4,7 @@ public class Neighbor {
     public final Position position;
     public final Slot slot;
 
-    public Neighbor(Position position, Slot slot) {
+    public Neighbor(final Position position, final Slot slot) {
         this.position = position;
         this.slot = slot;
     }
