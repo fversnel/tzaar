@@ -6,7 +6,7 @@
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
-                       Piece Position Stack Turn Color Piece$Type Neighbor))
+                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame))
   (:gen-class))
 
 (defn enum-to-keyword [^Enum enum]
@@ -118,6 +118,12 @@
     (for [row board]
       (for [slot row]
         (to-java Slot slot)))))
+
+(defmethod to-java [FinishedGame clojure.lang.APersistentMap]
+  [_ game]
+  (FinishedGame. (to-java Board (:initial-board game))
+                 (map #(to-java Turn) (:turns game))
+                 (to-java Color (:winner game))))
 
 (defmacro def-api
   [name return-type java-args f]

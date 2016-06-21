@@ -3,11 +3,11 @@ package tzaar.java;
 public class Main {
 
     public static void main(String[] args) {
-        Color winner = Api.playGame(
+        FinishedGame finishedGame = Api.playGame(
                 Api.RANDOM_BUT_LEGAL_AI,
                 Api.RANDOM_BUT_LEGAL_AI,
                 Api.defaultBoard(),
                 Api.SYSTEM_OUT_LOGGER);
-        //System.out.println(winner + " wins");
+        System.out.println(finishedGame.winner + " wins");
     }
 }

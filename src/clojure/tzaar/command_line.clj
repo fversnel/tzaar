@@ -45,7 +45,8 @@
 
 (defn command-line-game
   [white-player black-player board ^Logger l]
-  (let [done-chan (chan)]
+  (let [done-chan (chan 1)
+        initial-board board]
     (go-loop [board board
               [player-color & colors] (cycle [:white :black])
               [player & players] (cycle [white-player black-player])
@@ -74,7 +75,9 @@
           (let [winner (flip-color player-color)]
             (logln l (color-to-str winner)
                      "wins after" (count turns) "turns")
-            (>! done-chan winner)))))
+            (>! done-chan {:initial-board initial-board
+                           :turns turns
+                           :winner winner})))))
     (<!! done-chan)))
 
 (def command-line-player

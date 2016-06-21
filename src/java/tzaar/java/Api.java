@@ -25,13 +25,13 @@ public class Api {
     public static final tzaar.player.Player RANDOM_BUT_LEGAL_AI =
             (tzaar.player.Player) ClojureLayer.JAVA_API.deref("random-but-legal-ai");
 
-    public static Color playGame(final tzaar.player.Player whitePlayer,
+    public static FinishedGame playGame(final tzaar.player.Player whitePlayer,
                                  final tzaar.player.Player blackPlayer,
                                  final Board board) {
         return playGame(whitePlayer, blackPlayer, board, SYSTEM_OUT_LOGGER);
     }
 
-    public static Color playGame(final tzaar.player.Player whitePlayer,
+    public static FinishedGame playGame(final tzaar.player.Player whitePlayer,
                                  final tzaar.player.Player blackPlayer,
                                  final Board board,
                                  final Logger logger) {
@@ -40,6 +40,6 @@ public class Api {
                         blackPlayer,
                         FROM_JAVA.invoke(board),
                         logger);
-        return (Color) TO_JAVA.invoke(Color.class, winner);
+        return (FinishedGame) TO_JAVA.invoke(FinishedGame.class, winner);
     }
 }
