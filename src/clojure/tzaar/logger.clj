@@ -1,18 +1,24 @@
 (ns tzaar.logger)
 
 (defprotocol Logger
-  (-log [logger more]))
+  (-log [logger more])
+  (-enabled? [logger]))
 
 (def system-out-logger
   (reify Logger
-    (-log [_ more] (apply print more) (flush))))
+    (-log [_ more] (apply print more) (flush))
+    (-enabled? [_] true)))
 
 (def no-op-logger
   (reify Logger
-    (-log [_ _])))
+    (-log [_ _])
+    (-enabled? [_] false)))
 
-(defn logln [logger & more]
-  (-log logger (conj (vec more) \newline)))
+(defmacro log [logger & more]
+  `(if (-enabled? ~logger)
+     (-log ~logger ~(vec more))))
 
-(defn log [logger & more]
-  (-log logger more))
+; TODO Describe logln in terms of log
+(defmacro logln [logger & more]
+  `(if (-enabled? ~logger)
+     (-log ~logger ~(conj (vec more) \newline))))
