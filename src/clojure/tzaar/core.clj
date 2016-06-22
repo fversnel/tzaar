@@ -46,8 +46,8 @@
   (for [y (range (count board))
         x (range (count (nth board y)))
         :let [position [x y]]]
-    {:slot (lookup board position)
-     :position position}))
+    (array-map :slot (lookup board position)
+               :position position)))
 
 (defn iterate-stacks [color board]
   (->> board
@@ -78,15 +78,14 @@
     (not= stack-types (set stacks))))
 
 (defn neighbors [board position]
-  (letfn [(neighbor [dx dy]
-            (let [positions (iterate (fn [[x y]] [(+ x dx) (+ y dy)])
-                                     position)]
-              (->> positions
-                   (remove #(= position %))
-                   (map #(assoc {} :slot (lookup board %)
-                                   :position %))
-                   (remove #(= :empty (:slot %)))
-                   first)))]
+  (letfn [(neighbor [Δx Δy]
+            (->> position
+                 (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]))
+                 (drop 1) ; You're not your own neighbor
+                 (map #(array-map :slot (lookup board %)
+                                  :position %))
+                 (remove #(= :empty (:slot %)))
+                 first))]
     [; Horizontal
       (neighbor 1 0)
       (neighbor -1 0)
@@ -103,12 +102,12 @@
           color (stack-color stack)]
       (->> (neighbors board position)
            (remove #(= :nothing (:slot %)))
-           (map #(assoc {}
-                  :from position
-                  :to (:position %)
-                  :move-type (if (stack-color? color (:slot %))
-                                :stack
-                                :attack)))
+           (map #(array-map
+                   :from position
+                   :to (:position %)
+                   :move-type (if (stack-color? color (:slot %))
+                                 :stack
+                                 :attack)))
            ; Remove stacks that cannot be attacked
            (remove (fn [move]
                      (and (attack-move? move)
@@ -121,7 +120,7 @@
                             (apply-move board move)
                             color))))
            set))
-      #{}))
+    #{}))
 
 (defn attack-moves [board position]
   (-> (moves board position)

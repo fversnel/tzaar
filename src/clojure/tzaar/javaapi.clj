@@ -83,7 +83,7 @@
 (defmethod from-java Move
   [move]
   (cond
-    (.isPass move) :pass
+    (.isPass move) core/pass-move
     :else {:move-type (cond
                         (.isAttack move) :attack
                         (.isStack move) :stack)

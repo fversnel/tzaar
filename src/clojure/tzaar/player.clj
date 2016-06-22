@@ -15,7 +15,13 @@
            (if (and (s/valid? ::spec/turn turn)
                     (core/valid-turn? board color first-turn? turn))
              (play-turn turn)
-             (throw (Exception. "Invalid play"))))))
+             (throw (Exception. (str "Invalid play for "
+                                     color
+                                     " with "
+                                     turn
+                                     " on board:"
+                                     \newline
+                                     (core/board-to-str board))))))))
 
 (def random-but-legal-ai
   (reify tzaar.player/Player
