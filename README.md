@@ -25,7 +25,10 @@ Implementing a new player (human or AI):
   (reify tzaar.player/Player
     (-play [this color board first-turn?
             play-turn]
-    ...)
+      ; AI logic here
+
+      ; Submit the turn asynchronously
+      (play-turn turn))))
 ```
 
 Starting a game:
@@ -50,7 +53,10 @@ public class YourAI implements tzaar.java.Player {
                      Board board,
                      boolean isFirstTurn,
                      Consumer<Turn> playTurn) {
-        ...
+        // AI logic here
+
+        // Submit the turn asynchronously
+        playTurn.accept(turn);
     }
 }
 ```
