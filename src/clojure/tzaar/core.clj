@@ -1,7 +1,6 @@
 (ns tzaar.core
   (require [tzaar.parser :as parser]
-           [clojure.string :as string]
-           [clojure.edn :as edn]))
+           [clojure.string :as string]))
 
 (def empty-board (parser/read-board "empty-board"))
 (def default-board (parser/read-board "default-board"))
@@ -73,8 +72,7 @@
   [board color]
   (let [stacks (->> board
                     (iterate-stacks color)
-                    (map :slot)
-                    (map stack-type))]
+                    (map (comp stack-type :slot)))]
     (not= stack-types (set stacks))))
 
 (defn neighbors [board position]
@@ -219,3 +217,21 @@
 
 (defn color-to-str [color]
   (string/capitalize (name color)))
+
+(defn- position-to-coordinate [[x y]]
+  (let [column (string/upper-case (char (+ x (int \a))))
+        row (+ y 1)]
+    (str column row)))
+
+(defn move-to-str [move]
+  (case (:move-type move)
+    :attack (str (position-to-coordinate (:from move))
+                 " attacks "
+                 (position-to-coordinate (:to move)))
+    :stack (str (position-to-coordinate (:from move))
+                " stacks "
+                (position-to-coordinate (:to move)))
+    :pass "passes"))
+
+(defn turn-to-str [turn]
+  (string/join ", then " (map move-to-str turn)))

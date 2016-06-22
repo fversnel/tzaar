@@ -15,11 +15,10 @@
            (if (and (s/valid? ::spec/turn turn)
                     (core/valid-turn? board color first-turn? turn))
              (play-turn turn)
-             (throw (Exception. (str "Invalid play for "
-                                     color
-                                     " with "
-                                     turn
-                                     " on board:"
+             (throw (Exception. (str (core/color-to-str color)
+                                     " invalidly plays '"
+                                     (core/turn-to-str turn)
+                                     "' on board:"
                                      \newline
                                      (core/board-to-str board))))))))
 
