@@ -31,11 +31,12 @@ Implementing a new player (human or AI):
 Starting a game:
 
 ```clojure
-(require [tzaar.player :as player]
-         [tzaar.command-line :refer :all])
-(command-line-game player/random-but-legal-ai
-                   your-ai
-                   core/default-board)
+(require [tzaar.core :as core]
+         [tzaar.player :as player]
+         [tzaar.game :as game])
+(game/play-game player/random-but-legal-ai
+                your-ai
+                core/default-board)
 ```
 
 ### From Java

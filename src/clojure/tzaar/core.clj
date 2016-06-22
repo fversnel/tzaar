@@ -78,8 +78,8 @@
     (not= stack-types (set stacks))))
 
 (defn neighbors [board position]
-  (letfn [(neighbor [xfn yfn]
-            (let [positions (iterate (fn [[x y]] [(xfn x) (yfn y)])
+  (letfn [(neighbor [dx dy]
+            (let [positions (iterate (fn [[x y]] [(+ x dx) (+ y dy)])
                                      position)]
               (->> positions
                    (remove #(= position %))
@@ -88,16 +88,14 @@
                    (remove #(= :empty (:slot %)))
                    first)))]
     [; Horizontal
-      (neighbor inc identity)
-      (neighbor dec identity)
-
+      (neighbor 1 0)
+      (neighbor -1 0)
       ; Vertical
-      (neighbor identity inc)
-      (neighbor identity dec)
-
+      (neighbor 0 1)
+      (neighbor 0 -1)
       ; Diagonal
-      (neighbor dec dec)
-      (neighbor inc inc)]))
+      (neighbor -1 -1)
+      (neighbor 1 1)]))
 
 (defn moves [board position]
   (if (stack? (lookup board position))
@@ -138,11 +136,10 @@
 
 (defn valid-move?
   [board color first-turn-move? move]
-  (if-not (pass-move? move)
-    (and ((moves board (:from move)) move)
-         (or (not first-turn-move?) (attack-move? move))
-         (= color (stack-color (lookup board (:from move)))))
-    true))
+  (or (pass-move? move)
+      (and ((moves board (:from move)) move)
+           (or (not first-turn-move?) (attack-move? move))
+           (= color (stack-color (lookup board (:from move)))))))
 
 (defn apply-turn
   [board [first-move second-move]]
@@ -154,7 +151,7 @@
   [board color first-turn? [first-move second-move]]
   (and
     (valid-move? board color true first-move)
-    (if first-turn? (pass-move? second-move) true)
+    (or (not first-turn?) (pass-move? second-move))
     (valid-move? (apply-move board first-move) color false second-move)))
 
 ; Optionally add under which condition the player has lost

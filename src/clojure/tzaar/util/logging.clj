@@ -15,7 +15,7 @@
     (-enabled? [_] false)))
 
 (defmacro write [logger & more]
-  `(if (-enabled? ~logger)
+  `(when (-enabled? ~logger)
      (-write ~logger [~@more])))
 
 (defmacro writeln [logger & more]
