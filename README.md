@@ -69,6 +69,13 @@ final Player blackPlayer = new YourAI().toClojure();
 Api.playGame(whitePlayer, blackPlayer, Api.randomBoard());
 ```
 
+## To be done
+
+- Allow players to resign
+- Add Java Stream API?
+- Add GUI
+- Add support for Clojurescript
+
 ## License
 
 Copyright © 2016 Frank Versnel
