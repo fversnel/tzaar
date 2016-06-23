@@ -9,6 +9,9 @@ public class Main {
         System.out.println(Api.defaultBoard().moves(new Position(0, 0)));
         System.out.println(Api.defaultBoard().attackMoves(new Position(0, 0)));
         System.out.println(Api.defaultBoard().stackMoves(new Position(0, 0)));
+        System.out.println(Api.defaultBoard().allAttackMoves(Color.White));
+        System.out.println(Api.defaultBoard().allStackMoves(Color.Black));
+        System.out.println(Api.defaultBoard().neighbors(new Position(0, 0)).size());
 
 
         FinishedGame finishedGame = Api.playGame(

@@ -4,6 +4,7 @@ import clojure.lang.ArraySeq;
 import clojure.lang.IFn;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board {
     public final List<List<Slot>> slots;
@@ -43,16 +44,40 @@ public class Board {
         return callClojure("moves", this, position);
     }
 
-    public Collection<Move> stackMoves(final Position position) {
-        return callClojure("stack-moves", this, position);
+    public Collection<Move.Stack> stackMoves(final Position position) {
+        return filterStackMoves(moves(position));
     }
 
-    public Collection<Move> attackMoves(final Position position) {
-        return callClojure("attack-moves", this, position);
+    public Collection<Move.Attack> attackMoves(final Position position) {
+        return filterAttackMoves(moves(position));
     }
 
     public Collection<Move> allMoves(final Color color) {
         return callClojure("all-moves", this, color);
+    }
+
+    public Collection<Move.Attack> allAttackMoves(final Color color) {
+        return filterAttackMoves(allMoves(color));
+    }
+
+    public Collection<Move.Stack> allStackMoves(final Color color) {
+        return filterStackMoves(allMoves(color));
+    }
+
+    private Collection<Move.Attack> filterAttackMoves(Collection<Move> moves) {
+        return moves
+                .stream()
+                .filter(Move::isAttack)
+                .map(move -> (Move.Attack)move)
+                .collect(Collectors.toList());
+    }
+
+    private Collection<Move.Stack> filterStackMoves(Collection<Move> moves) {
+        return moves
+                .stream()
+                .filter(Move::isStack)
+                .map(move -> (Move.Stack)move)
+                .collect(Collectors.toList());
     }
 
     public Collection<Neighbor> neighbors(final Position position) {

@@ -138,8 +138,6 @@
 
 (def-api neighbors [Neighbor] [Board board Position position] core/neighbors)
 (def-api moves [Move] [Board board Position position] core/moves)
-(def-api attack-moves [Move] [Board board Position position] core/attack-moves)
-(def-api stack-moves [Move] [Board board Position position] core/stack-moves)
 (def-api all-moves [Move] [Board board Color color] core/all-moves)
 (def-api apply-move Board [Board board Move move] core/apply-move)
 (def-api board-to-str String [Board board] core/board-to-str)

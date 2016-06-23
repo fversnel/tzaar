@@ -124,16 +124,6 @@
            set))
     #{}))
 
-(defn attack-moves [board position]
-  (->> (moves board position)
-       (filter attack-move?)
-       set))
-
-(defn stack-moves [board position]
-  (->> (moves board position)
-       (filter stack-move?)
-       set))
-
 (defn all-moves [board color]
   (->> board
        (iterate-stacks color)
