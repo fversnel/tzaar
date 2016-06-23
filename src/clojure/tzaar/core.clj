@@ -19,6 +19,10 @@
 ;(defn whos-turn? [{:keys [turns] :as game-state}]
 ;  (if (even? (count turns)) :white :black))
 
+(def colors #{:white :black})
+(defn flip-color [color]
+  (if (= color :white) :black :white))
+
 (def move-types #{:attack :stack :pass})
 (defn attack-move? [move] (= :attack (:move-type move)))
 (defn stack-move? [move] (= :stack (:move-type move)))
@@ -121,9 +125,14 @@
     #{}))
 
 (defn attack-moves [board position]
-  (-> (moves board position)
-      (filter attack-move?)
-      set))
+  (->> (moves board position)
+       (filter attack-move?)
+       set))
+
+(defn stack-moves [board position]
+  (->> (moves board position)
+       (filter stack-move?)
+       set))
 
 (defn all-moves [board color]
   (->> board

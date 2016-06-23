@@ -6,9 +6,6 @@
                                        chan put! alts! timeout]])
   (:import (tzaar.util.logging Logger)))
 
-(defn- flip-color [color]
-  (if (= color :white) :black :white))
-
 (defn play-game
   [white-player black-player board ^Logger l]
   (let [done-chan (chan 1)
@@ -34,7 +31,7 @@
                    colors
                    players
                    (conj turns turn))))
-        (let [winner (flip-color player-color)]
+        (let [winner (core/flip-color player-color)]
           (logger/writeln l
                           (color-to-str winner)
                           "wins after" (count turns) "turns")

@@ -6,16 +6,16 @@
            [clojure.string :as string]))
 
 (defprotocol Player
-  (-play [player color board first-turn? play-turn]))
+  (-play [player player-color board first-turn? play-turn]))
 
 (defn play
-  [player color board first-turn? play-turn]
-  (-play player color board first-turn?
+  [player player-color board first-turn? play-turn]
+  (-play player player-color board first-turn?
          (fn [turn]
            (if (and (s/valid? ::spec/turn turn)
-                    (core/valid-turn? board color first-turn? turn))
+                    (core/valid-turn? board player-color first-turn? turn))
              (play-turn turn)
-             (throw (Exception. (str (core/color-to-str color)
+             (throw (Exception. (str (core/color-to-str player-color)
                                      " invalidly plays '"
                                      (core/turn-to-str turn)
                                      "' on board:"
@@ -24,13 +24,13 @@
 
 (def random-but-legal-ai
   (reify tzaar.player/Player
-    (-play [_ color board first-turn? play-turn]
-      (let [attack-move (->> (core/all-moves board color)
+    (-play [_ player-color board first-turn? play-turn]
+      (let [attack-move (->> (core/all-moves board player-color)
                              (filter core/attack-move?)
                              shuffle
                              first)
             second-move (let [new-board (core/apply-move board attack-move)]
-                          (->  (core/all-moves new-board color)
+                          (->  (core/all-moves new-board player-color)
                                shuffle
                                first
                                (or core/pass-move)))]

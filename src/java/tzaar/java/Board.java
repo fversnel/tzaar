@@ -43,6 +43,10 @@ public class Board {
         return callClojure("moves", this, position);
     }
 
+    public Collection<Move> stackMoves(final Position position) {
+        return callClojure("stack-moves", this, position);
+    }
+
     public Collection<Move> attackMoves(final Position position) {
         return callClojure("attack-moves", this, position);
     }
@@ -57,6 +61,10 @@ public class Board {
 
     public Board applyMove(final Move move) {
         return callClojure("apply-move", this, move);
+    }
+
+    public boolean isStackTypeMissing(final Color playerColor) {
+        return callClojure("stack-type-missing?", this, playerColor);
     }
 
     public boolean hasLost(final Color playerColor, final boolean isFirstMoveOfTurn) {

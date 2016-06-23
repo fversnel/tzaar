@@ -15,4 +15,5 @@
   :prep-tasks [["compile" "tzaar.player" "tzaar.util.logging"]
                "javac" "compile"]
   :profiles {:uberjar {:aot :all}}
-  :main tzaar.java.Main)
+  :main tzaar.java.Main
+  )
