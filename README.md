@@ -36,7 +36,7 @@ Starting a game:
 (require [tzaar.player :as player]
          [tzaar.game :as game])
 (game/play-game player/random-but-legal-ai
-                your-ai
+                (YourAI.)
                 game/default-board)
 ```
 
