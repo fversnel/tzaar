@@ -4,15 +4,18 @@
   (-write [logger more])
   (-enabled? [logger]))
 
-(def system-out-logger
-  (reify Logger
-    (-write [_ more] (apply print more) (flush))
-    (-enabled? [_] true)))
+(defrecord SystemOutLogger []
+  Logger
+  (-write [_ more] (apply print more) (flush))
+  (-enabled? [_] true))
 
-(def no-op-logger
-  (reify Logger
-    (-write [_ _])
-    (-enabled? [_] false)))
+(defrecord NoOpLogger []
+  Logger
+  (-write [_ _])
+  (-enabled? [_] false))
+
+(def system-out-logger (->SystemOutLogger))
+(def no-op-logger (->NoOpLogger))
 
 (defmacro write [logger & more]
   `(when (-enabled? ~logger)

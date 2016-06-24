@@ -64,8 +64,8 @@ public class YourAI implements tzaar.java.Player {
 
 Starting a game:
 ```java
-final Player whitePlayer = Api.RANDOM_BUT_LEGAL_AI;
-final Player blackPlayer = new YourAI().toClojure();
+final Object whitePlayer = Api.RANDOM_BUT_LEGAL_AI;
+final Object blackPlayer = new YourAI();
 Api.playGame(whitePlayer, blackPlayer, Api.randomBoard());
 ```
 

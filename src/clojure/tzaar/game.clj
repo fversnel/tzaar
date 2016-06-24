@@ -1,7 +1,7 @@
 (ns tzaar.game
   (require [tzaar.core :as core :refer [color-to-str]]
            [tzaar.player :refer [play]]
-           [tzaar.util.logging :as logger]
+           [tzaar.util.logging :as logging]
            [clojure.core.async :refer [>! <! <!! go go-loop
                                        chan put! alts! timeout]])
   (:import (tzaar.util.logging Logger)))
@@ -14,7 +14,7 @@
               [player-color & colors] (cycle [:white :black])
               [player & players] (cycle [white-player black-player])
               turns []]
-      (logger/writeln l (core/board-to-str board) \newline)
+      (logging/writeln l (core/board-to-str board) \newline)
       (if-not (core/lost? board player-color true)
         (let [turn-chan (chan 1)
               first-turn? (empty? turns)
@@ -22,21 +22,20 @@
               play-turn #(put! turn-chan %)]
           (play player player-color board first-turn? play-turn)
           (let [turn (<! turn-chan)]
-            (logger/writeln l
-                            "Turn" (str turn-number ":")
-                            (color-to-str player-color)
-                            "plays"
-                            (core/turn-to-str turn))
+            (logging/writeln l
+                             "Turn" (str turn-number ":")
+                             (color-to-str player-color)
+                             "plays"
+                             (core/turn-to-str turn))
             (recur (core/apply-turn board turn)
                    colors
                    players
                    (conj turns turn))))
         (let [winner (core/flip-color player-color)]
-          (logger/writeln l
-                          (color-to-str winner)
-                          "wins after" (count turns) "turns")
+          (logging/writeln l
+                           (color-to-str winner)
+                           "wins after" (count turns) "turns")
           (>! done-chan {:initial-board initial-board
                          :turns turns
                          :winner winner}))))
     (<!! done-chan)))
-

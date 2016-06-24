@@ -8,6 +8,8 @@
                        Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame))
   (:gen-class))
 
+
+
 (defn enum-to-keyword [^Enum enum]
   (-> enum
       str
@@ -124,6 +126,16 @@
                  (map #(to-java Turn) (:turns game))
                  (to-java Color (:winner game))))
 
+(extend-type tzaar.java.Player
+  player/Player
+  (-play [this player-color board first-turn? play-turn]
+    (.play this
+           (to-java Color player-color)
+           (to-java Board board)
+           (to-java Boolean first-turn?)
+           (reify java.util.function.Consumer
+             (accept [_ turn] (play-turn (from-java turn)))))))
+
 (defmacro def-api
   [name return-type java-args f]
   {:pre [(even? (count java-args))]}
@@ -145,6 +157,3 @@
 (def-api lost? Boolean [Board board Color player-color Boolean first-turn-move?] core/lost?)
 (def-api random-board Board [] core/random-board)
 (def-api default-board Board [] (fn [] core/default-board))
-
-(def random-but-legal-ai player/random-but-legal-ai)
-(def command-line-player player/command-line-player)
