@@ -21,25 +21,23 @@ thread each time.
 Implementing a new player (human or AI):
 
 ```clojure
-(def your-ai
-  (reify tzaar.player/Player
-    (-play [this color board first-turn?
-            play-turn]
-      ; AI logic here
+(defrecord YourAI []
+  tzaar.player/Player
+  (-play [this color board first-turn? play-turn]
+    ; AI logic here
 
-      ; Submit the turn asynchronously
-      (play-turn turn))))
+    ; Submit the turn asynchronously
+    (play-turn turn)))
 ```
 
 Starting a game:
 
 ```clojure
-(require [tzaar.core :as core]
-         [tzaar.player :as player]
+(require [tzaar.player :as player]
          [tzaar.game :as game])
 (game/play-game player/random-but-legal-ai
                 your-ai
-                core/default-board)
+                game/default-board)
 ```
 
 ### From Java

@@ -6,6 +6,9 @@
                                        chan put! alts! timeout]])
   (:import (tzaar.util.logging Logger)))
 
+(def random-board core/random-board)
+(def default-board core/default-board)
+
 (defn play-game
   [white-player black-player board ^Logger l]
   (let [done-chan (chan 1)
