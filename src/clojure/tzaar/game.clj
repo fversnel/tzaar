@@ -4,10 +4,14 @@
            [tzaar.util.logging :as logging]
            [clojure.core.async :refer [>! <! <!! go go-loop
                                        chan put! alts! timeout]])
-  (:import (tzaar.util.logging Logger)))
+  (:import (tzaar.util.logging Logger)
+           (tzaar.player RandomButLegalAI CommandlinePlayer)))
 
 (def random-board core/random-board)
 (def default-board core/default-board)
+
+(def random-but-legal-ai (RandomButLegalAI.))
+(def command-line-player (CommandlinePlayer.))
 
 (defn play-game
   [white-player black-player board ^Logger l]

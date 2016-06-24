@@ -33,9 +33,8 @@ Implementing a new player (human or AI):
 Starting a game:
 
 ```clojure
-(require [tzaar.player :as player]
-         [tzaar.game :as game])
-(game/play-game player/random-but-legal-ai
+(require [tzaar.game :as game])
+(game/play-game game/random-but-legal-ai
                 (YourAI.)
                 game/default-board)
 ```
