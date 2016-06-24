@@ -3,14 +3,16 @@ package tzaar.java;
 import tzaar.player.CommandlinePlayer;
 import tzaar.player.RandomButLegalAI;
 import tzaar.util.logging.Logger;
+import tzaar.util.logging.NoOpLogger;
+import tzaar.util.logging.SystemOutLogger;
 
 import static tzaar.java.ClojureLayer.*;
 
 public class Api {
     private Api() { }
 
-    public static final Logger SYSTEM_OUT_LOGGER = (Logger) LOGGING.deref("system-out-logger");
-    public static final Logger NO_OP_LOGGER = (Logger) LOGGING.deref("no-op-logger");
+    public static final Logger SYSTEM_OUT_LOGGER = new SystemOutLogger();
+    public static final Logger NO_OP_LOGGER = new NoOpLogger();
 
     public static Board defaultBoard() {
         return Board.standard();

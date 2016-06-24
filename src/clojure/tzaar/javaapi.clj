@@ -8,8 +8,6 @@
                        Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame))
   (:gen-class))
 
-
-
 (defn enum-to-keyword [^Enum enum]
   (-> enum
       str

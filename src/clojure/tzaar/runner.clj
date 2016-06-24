@@ -32,7 +32,7 @@
         logger (if (edn/read-string (or (get args "-logging") "false"))
                  logging/system-out-logger
                  logging/no-op-logger)
-        n-games (Integer/parseInt (or (get args "-n-games") "1"))]
+        n-games (Integer/parseInt (or (get args "-games") "1"))]
     (let [finished-games (run-games (:white players)
                                     (:black players)
                                     core/random-board

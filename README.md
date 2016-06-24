@@ -66,6 +66,32 @@ final Object blackPlayer = new YourAI();
 Api.playGame(whitePlayer, blackPlayer, Api.randomBoard());
 ```
 
+### Using the runner
+
+Once you got your AI ready to go you can pack it into a jar and run it with the tzaar runner.
+The runner is a command-line program that works as follows:
+
+First build the runner with Leiningen
+```
+lein uberjar
+```
+
+Then command it to run a few games
+```
+> java -cp "your-ai.jar;target/tzaar-0.1.0-SNAPSHOT-standalone.jar" \
+ tzaar.runner \
+ -white tzaar.player.RandomButLegalAI \
+ -black package.name.YourAI \
+ -games 10 \
+ -logging true
+```
+Outputs:
+```
+Played 10 games of Tzaar:
+White (RandomButLegalAI) wins 30% of the games in average 25 turns
+Black (YourAI) wins 70% of the games in average 24 turns
+```
+
 ## To be done
 
 - Allow players to resign
