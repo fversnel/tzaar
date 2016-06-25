@@ -26,7 +26,6 @@
             player (get players player-color)
             board (:board game-state)
             turns (:turns game-state)]
-        (logging/writeln l turns)
         (logging/writeln l (core/board-to-str board) \newline)
         (if-not (core/lost? game-state)
           (let [turn-chan (chan 1)
