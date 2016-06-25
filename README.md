@@ -72,12 +72,12 @@ Once you got your AI ready to go you can pack it into a jar and run it with the 
 The runner is a command-line program that works as follows:
 
 First build the runner with Leiningen
-```
+```shell
 lein uberjar
 ```
 
 Then command it to run a few games
-```
+```shell
 > java -cp "your-ai.jar;target/tzaar-0.1.0-SNAPSHOT-standalone.jar" \
  tzaar.runner \
  -white tzaar.player.RandomButLegalAI \
@@ -86,7 +86,7 @@ Then command it to run a few games
  -logging true
 ```
 Outputs:
-```
+```shell
 Played 10 games of Tzaar:
 White (RandomButLegalAI) wins 30% of the games in average 25 turns
 Black (YourAI) wins 70% of the games in average 24 turns
