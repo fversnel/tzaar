@@ -73,10 +73,10 @@ The runner is a command-line program that works as follows:
 
 First build the runner with Leiningen
 ```shell
-lein uberjar
+> lein uberjar
 ```
 
-Then command it to run a few games
+Then command it to run a few games:
 ```shell
 > java -cp "your-ai.jar;target/tzaar-0.1.0-SNAPSHOT-standalone.jar" \
  tzaar.runner \
@@ -85,6 +85,7 @@ Then command it to run a few games
  -games 10 \
  -logging true
 ```
+
 Outputs:
 ```shell
 Played 10 games of Tzaar:
