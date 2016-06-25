@@ -88,6 +88,10 @@ public class Board {
         return callClojure("apply-move", this, move);
     }
 
+    public Board applyTurn(final Turn turn) {
+        return callClojure("apply-turn", this, turn);
+    }
+
     public boolean isStackTypeMissing(final Color playerColor) {
         return callClojure("stack-type-missing?", this, playerColor);
     }
