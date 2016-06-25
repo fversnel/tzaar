@@ -5,7 +5,7 @@
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
-                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame))
+                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame GameState))
   (:gen-class))
 
 (defn enum-to-keyword [^Enum enum]
@@ -118,19 +118,23 @@
       (for [slot row]
         (to-java Slot slot)))))
 
+(defmethod to-java [GameState clojure.lang.APersistentMap]
+  [_ {:keys [initial-board board turns]}]
+  (GameState. (to-java Board initial-board)
+              (map #(to-java Turn %) turns)
+              (to-java Board board)))
+
 (defmethod to-java [FinishedGame clojure.lang.APersistentMap]
   [_ game]
   (FinishedGame. (to-java Board (:initial-board game))
-                 (map #(to-java Turn) (:turns game))
+                 (map #(to-java Turn %) (:turns game))
                  (to-java Color (:winner game))))
 
 (extend-type tzaar.java.Player
   player/Player
-  (-play [this player-color board first-turn? play-turn]
+  (-play [this game-state play-turn]
     (.play this
-           (to-java Color player-color)
-           (to-java Board board)
-           (to-java Boolean first-turn?)
+           (to-java GameState game-state)
            (reify java.util.function.Consumer
              (accept [_ turn] (play-turn (from-java turn)))))))
 

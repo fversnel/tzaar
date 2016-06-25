@@ -16,8 +16,7 @@
 ;   :turns []
 ;   :current-board board})
 ;
-;(defn whos-turn? [{:keys [turns] :as game-state}]
-;  (if (even? (count turns)) :white :black))
+
 
 (def player-colors #{:white :black})
 (defn opponent-color [player-color]
@@ -72,6 +71,12 @@
           (update-position to new-stack)))
     board))
 
+(defn first-turn? [{:keys [turns]}]
+  (empty? turns))
+
+(defn whos-turn [{:keys [turns]}]
+  (if (even? (count turns)) :white :black))
+
 (defn stack-type-missing?
   [board color]
   (let [stacks (->> board
@@ -122,7 +127,8 @@
            set))
     #{}))
 
-(defn all-moves [board color]
+(defn all-moves
+  [board color]
   (->> board
        (iterate-stacks color)
        (map :position)
@@ -141,20 +147,29 @@
       (apply-move first-move)
       (apply-move second-move)))
 
+
 (defn valid-turn?
-  [board color first-turn? [first-move second-move]]
-  (and
-    (valid-move? board color true first-move)
-    (or (not first-turn?) (pass-move? second-move))
-    (valid-move? (apply-move board first-move) color false second-move)))
+  [{:keys [board turns] :as game-state} [first-move second-move]]
+  (let [player-color (whos-turn game-state)]
+    (and
+      (valid-move? board player-color true first-move)
+      (or (first-turn? turns) (pass-move? second-move))
+      (valid-move? (apply-move board first-move)
+                   player-color
+                   false
+                   second-move))))
 
 ; Optionally add under which condition the player has lost
 (defn lost?
-  [board player-color first-turn-move?]
-  (let [moves (all-moves board player-color)
-        attack-moves (filter attack-move? moves)]
-    (or (stack-type-missing? board player-color)
-        (and first-turn-move? (empty? attack-moves)))))
+  ([game-state]
+   (lost? (:board game-state)
+          (whos-turn game-state)
+          true))
+  ([board player-color first-turn-move?]
+    (let [moves (all-moves board player-color)
+          attack-moves (filter attack-move? moves)]
+      (or (stack-type-missing? board player-color)
+          (and first-turn-move? (empty? attack-moves))))))
 
 (defn random-board []
   (let [color-stacks (fn [color] (map #(single-stack color %)

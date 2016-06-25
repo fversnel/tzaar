@@ -23,7 +23,7 @@ Implementing a new player (human or AI):
 ```clojure
 (defrecord YourAI []
   tzaar.player/Player
-  (-play [this color board first-turn? play-turn]
+  (-play [this game-state play-turn]
     ; AI logic here
 
     ; Submit the turn asynchronously
@@ -46,10 +46,8 @@ Implementing a new player:
 ```java
 public class YourAI implements tzaar.java.Player {
     @Override
-    public void play(Color playerColor,
-                     Board board,
-                     boolean isFirstTurn,
-                     Consumer<Turn> playTurn) {
+    public void play(final GameState gameState,
+                     final Consumer<Turn> playTurn) {
         // AI logic here
 
         // Submit the turn asynchronously

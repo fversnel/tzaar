@@ -22,7 +22,7 @@
   {:pre [(even? (count args))]}
   ; command-line args: -white tzaar.player.CommandlinePlayer
   ;                    -black tzaar.player.RandomButLegalAI
-  ;                    -n-games 100
+  ;                    -games 100
   ;                    -logging true
   (let [args (apply hash-map args)
         create-player (fn [class-name]
