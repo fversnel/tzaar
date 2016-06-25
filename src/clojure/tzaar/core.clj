@@ -19,9 +19,9 @@
 ;(defn whos-turn? [{:keys [turns] :as game-state}]
 ;  (if (even? (count turns)) :white :black))
 
-(def colors #{:white :black})
-(defn flip-color [color]
-  (if (= color :white) :black :white))
+(def player-colors #{:white :black})
+(defn opponent-color [player-color]
+  (if (= player-color :white) :black :white))
 
 (def move-types #{:attack :stack :pass})
 (defn attack-move? [move] (= :attack (:move-type move)))
@@ -80,7 +80,7 @@
     (not= stack-types (set stacks))))
 
 (defn neighbors [board position]
-  (letfn [(neighbor [Δx Δy]
+  (letfn [(neighbor [[Δx Δy]]
             (->> position
                  (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]))
                  (drop 1) ; You're not your own neighbor
@@ -88,15 +88,13 @@
                                   :position %))
                  (remove #(= :empty (:slot %)))
                  first))]
-    [; Horizontal
-      (neighbor 1 0)
-      (neighbor -1 0)
-      ; Vertical
-      (neighbor 0 1)
-      (neighbor 0 -1)
-      ; Diagonal
-      (neighbor -1 -1)
-      (neighbor 1 1)]))
+    (->> [; Horizontal
+          [1 0] [-1 0]
+          ; Vertical
+          [0 1] [0 -1]
+          ; Diagonal
+          [-1 -1] [1 1]]
+        (map neighbor))))
 
 (defn moves [board position]
   (if (stack? (lookup board position))

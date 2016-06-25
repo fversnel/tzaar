@@ -22,18 +22,20 @@
                                      \newline
                                      (core/board-to-str board))))))))
 
+(defn- random-move [moves]
+  (if-not (empty? moves)
+    (rand-nth moves)
+    core/pass-move))
+
 (defrecord RandomButLegalAI []
   tzaar.player/Player
   (-play [_ player-color board first-turn? play-turn]
     (let [attack-move (->> (core/all-moves board player-color)
                            (filter core/attack-move?)
-                           shuffle
-                           first)
+                           random-move)
           second-move (let [new-board (core/apply-move board attack-move)]
-                        (->  (core/all-moves new-board player-color)
-                             shuffle
-                             first
-                             (or core/pass-move)))]
+                        (-> (core/all-moves new-board player-color)
+                            random-move))]
       (play-turn [attack-move (if first-turn? core/pass-move second-move)]))))
 
 

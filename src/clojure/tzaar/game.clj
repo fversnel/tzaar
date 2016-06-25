@@ -38,7 +38,7 @@
                    colors
                    players
                    (conj turns turn))))
-        (let [winner (core/flip-color player-color)]
+        (let [winner (core/opponent-color player-color)]
           (logging/writeln l
                            (color-to-str winner)
                            "wins after" (count turns) "turns")
