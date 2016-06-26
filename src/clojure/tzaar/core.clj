@@ -1,5 +1,6 @@
 (ns tzaar.core
   (require [tzaar.parser :as parser]
+           [taoensso.timbre.profiling :as profiling :refer [p defnp]]
            [clojure.string :as string]))
 
 (def empty-board (parser/read-board "empty-board"))
@@ -32,12 +33,11 @@
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
-(defn top-piece [stack] (nth stack 0))
-(def no-stack #{:empty :nothing})
-(defn stack? [slot] (not (no-stack slot)))
-(defn stack-color [stack] (-> stack (nth 0) (nth 0)))
+(defn top-piece [[piece & _]] piece)
+(defn stack? [slot] (not (#{:empty :nothing} slot)))
+(defn stack-color [[[color _]]] color)
 (defn stack-color? [color stack] (= color (stack-color stack)))
-(defn stack-type [stack] (-> stack (nth 0) (nth 1)))
+(defn stack-type [[[_ type]]] type)
 (defn stack-size [stack] (count stack))
 
 (defn update-position [board [^int x ^int y] new-slot]
@@ -159,7 +159,7 @@
   (let [player-color (whos-turn game-state)]
     (and
       (valid-move? board player-color true first-move)
-      (or (first-turn? turns) (pass-move? second-move))
+      (or (not (first-turn? game-state)) (pass-move? second-move))
       (valid-move? (apply-move board first-move)
                    player-color
                    false

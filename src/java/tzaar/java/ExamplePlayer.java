@@ -8,10 +8,8 @@ public class ExamplePlayer implements Player {
         final Color playerColor = gameState.whosTurn();
         final Board board = gameState.board;
 
-        final Move.Attack attackMove = board.allMoves(playerColor)
+        final Move.Attack attackMove = board.allAttackMoves(playerColor)
                 .stream()
-                .filter(Move::isAttack)
-                .map(move -> (Move.Attack) move)
                 .findFirst()
                 .get();
         final Move secondMove;
@@ -24,6 +22,9 @@ public class ExamplePlayer implements Player {
                     .findFirst()
                     .orElse(Move.Pass);
         }
+        Board updatedBoard;
+        updatedBoard = gameState.board.applyMove(attackMove);
+        updatedBoard = updatedBoard.applyMove(secondMove);
         playTurn.accept(new Turn(attackMove, secondMove));
     }
 }

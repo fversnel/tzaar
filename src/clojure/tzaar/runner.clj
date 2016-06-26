@@ -2,6 +2,7 @@
   (require [tzaar.game :as game]
            [tzaar.player]
            [tzaar.javaapi]
+           [tzaar.ai.frank2]
            [tzaar.util.logging :as logging]
            [clojure.edn :as edn]
            [tzaar.core :as core])
@@ -34,7 +35,7 @@
                  logging/no-op-logger)
         n-games (Integer/parseInt (or (get args "-games") "1"))]
     ; TODO Don't keep accumulating finished games as we will eventually
-    ; run out of memory, instead reduce the games into a final struct
+    ; run out of memory, instead reduce the games into a final map
     ; that represents win count for each player and total turn count
     (println "Starting runner...")
     (let [finished-games (run-games (:white players)

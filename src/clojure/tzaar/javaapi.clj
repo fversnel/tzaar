@@ -58,9 +58,10 @@
 
 (defmethod from-java Neighbor
   [neighbor]
-  {:position (from-java (.-position neighbor))
-   :slot (from-java (.-slot neighbor))})
-(defmethod to-java [Neighbor clojure.lang.APersistentMap]
+  (core/->Slot
+    (from-java (.-slot neighbor))
+    (from-java (.-position neighbor))))
+(defmethod to-java [Neighbor clojure.lang.IRecord]
   [_ neighbor]
   (Neighbor. (to-java Position (:position neighbor))
              (to-java Slot (:slot neighbor))))
@@ -84,12 +85,13 @@
   [move]
   (cond
     (.isPass move) core/pass-move
-    :else {:move-type (cond
-                        (.isAttack move) :attack
-                        (.isStack move) :stack)
-           :from      (from-java (.-from move))
-           :to        (from-java (.-to move))}))
-(defmethod to-java [Move clojure.lang.APersistentMap]
+    :else (core/->Move
+            (cond
+              (.isAttack move) :attack
+              (.isStack move) :stack)
+            (from-java (.-from move))
+            (from-java (.-to move)))))
+(defmethod to-java [Move clojure.lang.IRecord]
   [_ move]
   (condp = (:move-type move)
     :attack (Move$Attack. (to-java Position (:from move))
