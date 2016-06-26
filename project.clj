@@ -12,7 +12,7 @@
   :java-source-paths ["src/java"]
   :aot [tzaar.javaapi tzaar.player tzaar.game tzaar.util.logging]
   :javac-options ["-target" "1.8" "-source" "1.8"]
-  :prep-tasks [["compile" "tzaar.player" "tzaar.util.logging"]
+  :prep-tasks [["compile" "tzaar.player" "tzaar.util.logging" "tzaar.ai.frank2"]
                "javac" "compile"]
   :profiles {:uberjar {:aot :all}}
-  :main tzaar.runner)
+  :main tzaar.java.Main)
