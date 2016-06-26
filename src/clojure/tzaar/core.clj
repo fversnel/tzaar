@@ -1,6 +1,6 @@
 (ns tzaar.core
   (require [tzaar.parser :as parser]
-           [taoensso.timbre.profiling :as profiling :refer [p defnp]]
+           ;[taoensso.timbre.profiling :as profiling :refer [p defnp]]
            [clojure.string :as string]))
 
 (def empty-board (parser/read-board "empty-board"))

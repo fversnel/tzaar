@@ -17,6 +17,11 @@
              :tott (/ 15)})
 
 (defn score-board [player-color board]
+  ; TODO Add extra score attributes:
+  ;   - Stack sizes vs enemy stack sizes
+  ;   -
+  ;
+
   (letfn [(score-stack [stacks]
             (->> stacks
               ; Example: a stack of 2 with a tzaar at the top
