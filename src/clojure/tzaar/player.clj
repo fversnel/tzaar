@@ -3,7 +3,8 @@
            [tzaar.core :as core :refer [color-to-str]]
            [tzaar.util.macros :refer [try-repeatedly]]
            [clojure.spec :as s]
-           [clojure.string :as string]))
+           [clojure.string :as string])
+  (:import (tzaar.core Move)))
 
 (defprotocol Player
   (-play [player game-state play-turn]))
@@ -57,9 +58,9 @@
             (let [[move-type from to] (-> expr
                                           string/trim-newline
                                           (string/split #"\s+"))]
-              {:move-type (keyword move-type)
-               :from (coordinate-to-position from)
-               :to (coordinate-to-position to)}))
+              (Move. (keyword move-type)
+                     (coordinate-to-position from)
+                     (coordinate-to-position to))))
 
 (defrecord CommandlinePlayer []
   tzaar.player/Player

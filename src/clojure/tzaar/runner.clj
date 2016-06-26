@@ -33,6 +33,10 @@
                  logging/system-out-logger
                  logging/no-op-logger)
         n-games (Integer/parseInt (or (get args "-games") "1"))]
+    ; TODO Don't keep accumulating finished games as we will eventually
+    ; run out of memory, instead reduce the games into a final struct
+    ; that represents win count for each player and total turn count
+    (println "Starting runner...")
     (let [finished-games (run-games (:white players)
                                     (:black players)
                                     core/random-board
