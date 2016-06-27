@@ -39,6 +39,7 @@ Starting a game:
 
 ```clojure
 (require [tzaar.game :as game])
+
 (game/play-game game/random-but-legal-ai
                 (YourAI.)
                 game/default-board)
@@ -47,7 +48,7 @@ Starting a game:
 ### From Java
 
 Add tzaar to your Gradle build file:
-```
+```groovy
 repositories {
     maven { url "http://clojars.org/repo" }
     mavenCentral()
