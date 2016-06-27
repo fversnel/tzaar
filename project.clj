@@ -1,4 +1,4 @@
-(defproject org.fversnel/tzaar "0.1.0"
+(defproject org.fversnel/tzaar "0.1.1-SNAPSHOT"
   :description "Clojure implementation of the abstract strategy game Tzaar by Kris Burm"
   :url "https://github.com/fversnel/tzaar"
   :license {:name "Eclipse Public License"
