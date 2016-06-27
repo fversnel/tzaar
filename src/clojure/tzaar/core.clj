@@ -33,7 +33,7 @@
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
-(defn top-piece [[piece & _]] piece)
+(defn top-piece [[piece]] piece)
 (defn stack? [slot] (not (#{:empty :nothing} slot)))
 (defn stack-color [[[color _]]] color)
 (defn stack-color? [color stack] (= color (stack-color stack)))

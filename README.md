@@ -17,6 +17,12 @@ to be thread-safe.
 
 ### From Clojure
 
+With Leiningen/Boot:
+
+```clojure
+[org.fversnel/tzaar "0.1.0-SNAPSHOT"]
+```
+
 Implementing a new player (human or AI):
 
 ```clojure
@@ -39,6 +45,19 @@ Starting a game:
 ```
 
 ### From Java
+
+Add tzaar to your Gradle build file:
+```
+repositories {
+    maven { url "http://clojars.org/repo" }
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.clojure:clojure:1.9.0-alpha7"
+    compile "org.fversnel:tzaar:0.1.0-SNAPSHOT"
+}
+```
 
 Implementing a new player:
 
