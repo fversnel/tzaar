@@ -13,8 +13,9 @@
   [player game-state play-turn]
   (-play player game-state
          (fn [turn]
-           (if (and (s/valid? ::spec/turn turn)
-                    (core/valid-turn? game-state turn))
+           {:pre [(not (some nil? turn))
+                  (s/valid? ::spec/turn turn)]}
+           (if (core/valid-turn? game-state turn)
              (play-turn turn)
              (throw (Exception. (str (core/color-to-str (core/whos-turn game-state))
                                      " invalidly plays '"

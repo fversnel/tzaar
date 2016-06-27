@@ -112,6 +112,8 @@ Black (YourAI) wins 70% of the games in average 24 turns
 
 ## To be done
 
+- Keep track of time taken by an AI and report it at the end of the match
+- Allow for optional use of chess-like clocks
 - Allow players to resign
 - Add Java Stream API?
 - Add GUI
