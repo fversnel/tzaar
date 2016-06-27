@@ -2,15 +2,15 @@ package tzaar.java;
 
 public class Neighbor {
     public final Position position;
-    public final Slot slot;
+    public final Stack stack;
 
-    public Neighbor(final Position position, final Slot slot) {
+    public Neighbor(final Position position, final Stack slot) {
         this.position = position;
-        this.slot = slot;
+        this.stack = slot;
     }
 
     @Override
     public String toString() {
-        return String.format("[Position: %s, Slot: %s]", position, slot);
+        return String.format("[Position: %s, Stack: %s]", position, stack);
     }
 }

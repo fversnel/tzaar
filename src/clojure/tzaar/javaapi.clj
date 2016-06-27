@@ -59,12 +59,12 @@
 (defmethod from-java Neighbor
   [neighbor]
   (core/->Slot
-    (from-java (.-slot neighbor))
+    (from-java (.stack neighbor))
     (from-java (.-position neighbor))))
 (defmethod to-java [Neighbor clojure.lang.IRecord]
   [_ neighbor]
   (Neighbor. (to-java Position (:position neighbor))
-             (to-java Slot (:slot neighbor))))
+             (to-java Stack (:slot neighbor))))
 
 (defmethod from-java Slot
   [slot]
