@@ -20,7 +20,7 @@ to be thread-safe.
 With Leiningen/Boot:
 
 ```clojure
-[org.fversnel/tzaar "0.1.0-SNAPSHOT"]
+[org.fversnel/tzaar "0.1.0"]
 ```
 
 Implementing a new player (human or AI):
