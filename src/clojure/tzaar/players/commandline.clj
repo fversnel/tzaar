@@ -43,13 +43,15 @@
                              (validate-move board true))
                         :on-failure (println "Wrong input, try again"))
           board-after-attack (apply-move board attack-move)
-          second-move (if-not (first-turn? game-state)
+          second-move (when-not (first-turn? game-state)
                         (try-repeatedly
                           (print "Second move=> ")
                           (flush)
                           (->> (read-line)
                                parse-move
                                (validate-move board-after-attack false))
-                          :on-failure (println "Wrong input, try again"))
-                        pass-move)]
-      (play-turn [attack-move second-move]))))
+                          :on-failure (println "Wrong input, try again")))
+          turn (if (first-turn? game-state)
+                 [attack-move]
+                 [attack-move second-move])]
+      (play-turn turn))))

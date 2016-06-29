@@ -8,4 +8,8 @@ public class Turn {
         this.firstMove = firstMove;
         this.secondMove = secondMove;
     }
+
+    public static Turn firstTurn(final Move.Attack attackMove) {
+        return new Turn(attackMove, Move.Pass);
+    }
 }

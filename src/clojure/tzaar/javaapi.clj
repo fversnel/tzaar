@@ -135,9 +135,13 @@
               (to-java Board board)))
 
 (defmethod to-java [Stats clojure.lang.APersistentMap]
-  [_ {:keys [time-taken total-turns]}]
+  [_ {:keys [time-taken total-turns total-attack-moves
+             total-stack-moves total-pass-moves]}]
   (Stats. (to-java Duration time-taken)
-          total-turns))
+          total-turns
+          total-attack-moves
+          total-stack-moves
+          total-pass-moves))
 
 (defmethod to-java [FinishedGame clojure.lang.APersistentMap]
   [_ game]
@@ -153,7 +157,14 @@
     (.play this
            (to-java GameState game-state)
            (reify java.util.function.Consumer
-             (accept [_ turn] (play-turn (from-java turn)))))))
+             (accept [_ turn]
+               ; If it's the first turn of the game
+               ; we just ignore the second move
+               (let [turn (from-java turn)
+                     turn (if (core/first-turn? game-state)
+                            [(first turn)]
+                            turn)]
+                 (play-turn turn)))))))
 
 (defmacro def-api
   [name return-type java-args f]

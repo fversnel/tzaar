@@ -16,6 +16,7 @@
                     :stack ::stack-move
                     :pass ::pass-move))
 
+(s/def ::first-turn (s/tuple ::attack-move))
 (s/def ::turn (s/tuple ::attack-move ::move))
 
 (s/def ::piece (s/tuple #{:white :black} core/stack-types))

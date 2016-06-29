@@ -45,15 +45,14 @@
 (defn possible-turns
   [{:keys [board] :as game-state}]
   (let [player-color (core/whos-turn game-state)]
-    (for [attack-move (attack-moves board player-color)
-          second-move (cons
-                        core/pass-move
-                        (if-not (core/first-turn? game-state)
-                          (core/all-moves
-                            (core/apply-move board attack-move)
-                            player-color)
-                          []))]
-      [attack-move second-move])))
+    (if (core/first-turn? game-state)
+      (map vector (attack-moves board player-color))
+      (for [attack-move (attack-moves board player-color)
+            second-move (cons core/pass-move
+                              (core/all-moves
+                                (core/apply-move board attack-move)
+                                player-color))]
+        [attack-move second-move]))))
 
 (defn evaluate-turn [board color turn]
   {:turn turn

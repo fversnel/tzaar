@@ -16,7 +16,9 @@
       game-state
       (fn [turn]
         {:pre [(not-any? nil? turn)
-               (s/valid? ::spec/turn turn)]}
+               (if (core/first-turn? game-state)
+                 (s/valid? ::spec/first-turn turn)
+                 (s/valid? ::spec/turn turn))]}
         (let [time-taken (timer/nanos-elapsed timer)]
           (if (core/valid-turn? game-state turn)
             (play-turn [turn time-taken])

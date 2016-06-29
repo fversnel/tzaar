@@ -147,23 +147,21 @@
            (or (not first-turn-move?) (attack-move? move))
            (= color (stack-color (lookup board (:from move)))))))
 
-(defn apply-turn
-  [board [first-move second-move]]
-  (-> board
-      (apply-move first-move)
-      (apply-move second-move)))
-
+(defn apply-turn [board turn]
+  (reduce apply-move board turn))
 
 (defn valid-turn?
-  [{:keys [board turns] :as game-state} [first-move second-move]]
-  (let [player-color (whos-turn game-state)]
+  [{:keys [board] :as game-state} turn]
+  (let [player-color (whos-turn game-state)
+        [first-move second-move] turn]
     (and
       (valid-move? board player-color true first-move)
-      (or (not (first-turn? game-state)) (pass-move? second-move))
-      (valid-move? (apply-move board first-move)
-                   player-color
-                   false
-                   second-move))))
+      (if-not (first-turn? game-state)
+        (valid-move? (apply-move board first-move)
+                     player-color
+                     false
+                     second-move)
+        (nil? second-move)))))
 
 ; Optionally add under which condition the player has lost
 (defn lost?
@@ -252,4 +250,7 @@
     :pass "passes"))
 
 (defn turn->str [turn]
-  (string/join ", then " (map move->str turn)))
+  (->> turn
+       (map move->str)
+       (map #(str "'" % "'"))
+       (string/join " then ")))

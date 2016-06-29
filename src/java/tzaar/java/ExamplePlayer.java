@@ -12,19 +12,17 @@ public class ExamplePlayer implements Player {
                 .stream()
                 .findFirst()
                 .get();
-        final Move secondMove;
+        final Turn turn;
         if(gameState.isFirstTurn()) {
-            secondMove = Move.Pass;
+            turn = Turn.firstTurn(attackMove);
         } else {
-            secondMove = board.applyMove(attackMove)
+            Move secondMove = board.applyMove(attackMove)
                     .allMoves(playerColor)
                     .stream()
                     .findFirst()
                     .orElse(Move.Pass);
+            turn = new Turn(attackMove, secondMove);
         }
-        Board updatedBoard;
-        updatedBoard = gameState.board.applyMove(attackMove);
-        updatedBoard = updatedBoard.applyMove(secondMove);
-        playTurn.accept(new Turn(attackMove, secondMove));
+        playTurn.accept(turn);
     }
 }

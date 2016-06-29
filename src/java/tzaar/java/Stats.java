@@ -5,10 +5,18 @@ import java.time.Duration;
 public class Stats {
     public final Duration timeTaken;
     public final int totalTurns;
+    public final int totalAttackMoves;
+    public final int totalStackMoves;
+    public final int totalPassMoves;
 
-    public Stats(Duration timeTaken, int totalTurns) {
+    public Stats(final Duration timeTaken, final int totalTurns,
+                 final int totalAttackMoves, final int totalStackMoves,
+                 final int totalPassMoves) {
         this.timeTaken = timeTaken;
         this.totalTurns = totalTurns;
+        this.totalAttackMoves = totalAttackMoves;
+        this.totalStackMoves = totalStackMoves;
+        this.totalPassMoves = totalPassMoves;
     }
 
     @Override

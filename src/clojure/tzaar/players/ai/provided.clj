@@ -16,7 +16,8 @@
                            random-move)
           second-move (let [new-board (apply-move board attack-move)]
                         (-> (all-moves new-board player-color)
-                            random-move))]
-      (play-turn [attack-move (if (first-turn? game-state)
-                                pass-move
-                                second-move)]))))
+                            random-move))
+          turn (if (first-turn? game-state)
+                 [attack-move]
+                 [attack-move second-move])]
+      (play-turn turn))))
