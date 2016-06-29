@@ -24,8 +24,8 @@
     (go-loop [game-state {:initial-board board
                           :board board
                           :turns []
-                          :stats {:white {:time-taken 0}
-                                  :black {:time-taken 0}}}]
+                          :stats {:white {:time-taken 0 :total-turns 0}
+                                  :black {:time-taken 0 :total-turns 0}}}]
       (let [player-color (core/whos-turn game-state)
             player (player-color players)
             board (:board game-state)
@@ -50,7 +50,9 @@
                     (assoc :board (core/apply-turn board turn)
                            :turns (conj turns turn))
                     (update-in [:stats player-color :time-taken]
-                               #(+ % time-taken))))))
+                               (partial + time-taken))
+                    (update-in [:stats player-color :total-turns]
+                               inc)))))
           (let [winner (core/opponent-color player-color)]
             (logging/writeln l
                              (core/color->str winner)

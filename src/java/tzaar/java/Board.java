@@ -102,7 +102,7 @@ public class Board {
 
     @Override
     public String toString() {
-        return callClojure("board-to-str", this);
+        return callClojure("board->str", this);
     }
 
     private static <TReturn> TReturn callClojure(final String clojureFnName,

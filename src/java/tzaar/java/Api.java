@@ -23,6 +23,7 @@ public class Api {
 
     public static final tzaar.player.Player COMMAND_LINE_PLAYER = new CommandlinePlayer();
     public static final tzaar.player.Player RANDOM_BUT_LEGAL_AI = new RandomButLegalAI();
+    public static final tzaar.player.Player FRANK_AI2 = new tzaar.players.ai.frank2.FrankAI();
 
     public static FinishedGame playGame(final Object whitePlayer,
                                  final Object blackPlayer,

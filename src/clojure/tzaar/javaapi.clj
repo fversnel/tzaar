@@ -5,7 +5,8 @@
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
-                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame GameState))
+                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame GameState Stats)
+           (java.time Duration))
   (:gen-class))
 
 (defn enum-to-keyword [^Enum enum]
@@ -19,6 +20,13 @@
        name
        ->PascalCase
        (Enum/valueOf clazz)))
+
+(defmethod from-java Duration
+  [duration]
+  (.toNanos duration))
+(defmethod to-java [Duration java.lang.Number]
+  [_ nanos]
+  (Duration/ofNanos nanos))
 
 (defmethod from-java Color
   [enum]
@@ -126,11 +134,18 @@
               (map #(to-java Turn %) turns)
               (to-java Board board)))
 
+(defmethod to-java [Stats clojure.lang.APersistentMap]
+  [_ {:keys [time-taken total-turns]}]
+  (Stats. (to-java Duration time-taken)
+          total-turns))
+
 (defmethod to-java [FinishedGame clojure.lang.APersistentMap]
   [_ game]
   (FinishedGame. (to-java Board (:initial-board game))
                  (map #(to-java Turn %) (:turns game))
-                 (to-java Color (:winner game))))
+                 (to-java Color (:winner game))
+                 (to-java Stats (get-in game [:stats :white]))
+                 (to-java Stats (get-in game [:stats :black]))))
 
 (extend-type tzaar.java.Player
   player/Player
@@ -157,7 +172,7 @@
 (def-api all-moves [Move] [Board board Color color] core/all-moves)
 (def-api apply-move Board [Board board Move move] core/apply-move)
 (def-api apply-turn Board [Board board Turn turn] core/apply-turn)
-(def-api board-to-str String [Board board] core/board->str)
+(def-api board->str String [Board board] core/board->str)
 (def-api stack-type-missing? Boolean [Board board Color player-color] core/stack-type-missing?)
 (def-api lost? Boolean [Board board Color player-color Boolean first-turn-move?] core/lost?)
 (def-api random-board Board [] core/random-board)

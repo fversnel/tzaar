@@ -14,12 +14,14 @@
       (>= ns       1000) (str (round2 (/ ns       1000)) "μs") ; 1e3
       :else (str ns "ns"))))
 
-(defn timer->str [timer]
-  (format-nanos (nanos-elapsed timer)))
-
 (defn current-time [] (System/nanoTime))
 
 (defn start-timer []
   (let [start-time (current-time)]
-    (reify Timer
-      (nanos-elapsed [_] (- (current-time) start-time)))))
+    (reify
+      Timer
+      (nanos-elapsed [_]
+        (- (current-time) start-time))
+      Object
+      (toString [this]
+        (format-nanos (nanos-elapsed this))))))

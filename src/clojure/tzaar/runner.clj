@@ -5,7 +5,8 @@
            [tzaar.players.ai.frank2]
            [tzaar.util.logging :as logging]
            [clojure.edn :as edn]
-           [tzaar.core :as core])
+           [tzaar.core :as core]
+           [tzaar.util.timer :as timer])
   (:gen-class))
 
 (defn run-games
@@ -44,11 +45,18 @@
                                     logger
                                     {:n-games n-games})
           games-by-winner (group-by :winner finished-games)
+          total-turns (->> finished-games
+                           (map (comp count :turns))
+                           (reduce +))
           avg-turns (fn [games]
                       (if (< 0 (count games))
-                        (let [total-turns (count (mapcat :turns games))]
-                          (int (/ total-turns (count games))))
+                        (int (/ total-turns (count games)))
                         "-"))
+          avg-time (fn [player-color]
+                     (let [total-time (->> finished-games
+                                           (map #(get-in % [:stats player-color :time-taken]))
+                                           (reduce +))]
+                       (timer/format-nanos (/ total-time total-turns))))
           percentage-wins (fn [games]
                             (int (* (/ (count games) (count finished-games)) 100)))
           print-player (fn [player-color]
@@ -57,7 +65,8 @@
                                   "wins"
                                   (str (percentage-wins (player-color games-by-winner)) "%")
                                   "of the games"
-                                  "in average" (avg-turns (player-color games-by-winner)) "turns"))]
+                                  "in average" (avg-turns (player-color games-by-winner)) "turns"
+                                  "taking" (avg-time player-color) "per turn"))]
       (println "Played" (count finished-games) "games of Tzaar:")
       (print-player :white)
       (print-player :black))))
