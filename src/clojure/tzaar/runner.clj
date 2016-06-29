@@ -2,7 +2,7 @@
   (require [tzaar.game :as game]
            [tzaar.player]
            [tzaar.javaapi]
-           [tzaar.ai.frank2]
+           [tzaar.players.ai.frank2]
            [tzaar.util.logging :as logging]
            [clojure.edn :as edn]
            [tzaar.core :as core])
@@ -52,7 +52,7 @@
           percentage-wins (fn [games]
                             (int (* (/ (count games) (count finished-games)) 100)))
           print-player (fn [player-color]
-                         (println (core/color-to-str player-color)
+                         (println (core/color->str player-color)
                                   (str "(" (.getSimpleName (.getClass (player-color players))) ")")
                                   "wins"
                                   (str (percentage-wins (player-color games-by-winner)) "%")

@@ -157,7 +157,7 @@
 (def-api all-moves [Move] [Board board Color color] core/all-moves)
 (def-api apply-move Board [Board board Move move] core/apply-move)
 (def-api apply-turn Board [Board board Turn turn] core/apply-turn)
-(def-api board-to-str String [Board board] core/board-to-str)
+(def-api board-to-str String [Board board] core/board->str)
 (def-api stack-type-missing? Boolean [Board board Color player-color] core/stack-type-missing?)
 (def-api lost? Boolean [Board board Color player-color Boolean first-turn-move?] core/lost?)
 (def-api random-board Board [] core/random-board)

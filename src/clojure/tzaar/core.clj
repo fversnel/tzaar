@@ -199,7 +199,7 @@
                (rest stacks)
                (rest empty-positions))))))
 
-(defn board-to-str [board]
+(defn board->str [board]
   (letfn [(stack-to-str [stack]
             (str (if (< 1 (stack-size stack))
                    (stack-size stack)
@@ -233,23 +233,23 @@
         \newline
         (string/join \newline row-strs)))))
 
-(defn color-to-str [color]
+(defn color->str [color]
   (string/capitalize (name color)))
 
-(defn- position-to-coordinate [[x y]]
+(defn- position->coordinate [[x y]]
   (let [column (string/upper-case (char (+ x (int \a))))
         row (+ y 1)]
     (str column row)))
 
-(defn move-to-str [move]
+(defn move->str [move]
   (case (:move-type move)
-    :attack (str (position-to-coordinate (:from move))
+    :attack (str (position->coordinate (:from move))
                  " attacks "
-                 (position-to-coordinate (:to move)))
-    :stack (str (position-to-coordinate (:from move))
+                 (position->coordinate (:to move)))
+    :stack (str (position->coordinate (:from move))
                 " stacks "
-                (position-to-coordinate (:to move)))
+                (position->coordinate (:to move)))
     :pass "passes"))
 
-(defn turn-to-str [turn]
-  (string/join ", then " (map move-to-str turn)))
+(defn turn->str [turn]
+  (string/join ", then " (map move->str turn)))

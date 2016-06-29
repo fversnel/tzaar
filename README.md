@@ -97,7 +97,7 @@ Then command it to run a few games:
 ```shell
 > java -cp "your-ai.jar;target/tzaar-0.1.0-SNAPSHOT-standalone.jar" \
  tzaar.runner \
- -white tzaar.player.RandomButLegalAI \
+ -white tzaar.players.ai.provided.RandomButLegalAI \
  -black package.name.YourAI \
  -games 10 \
  -logging true

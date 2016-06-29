@@ -9,9 +9,12 @@
                  [camel-snake-kebab "0.4.0"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
-  :aot [tzaar.javaapi tzaar.player tzaar.game tzaar.util.logging]
+  :aot [tzaar.javaapi tzaar.player tzaar.game tzaar.util.logging
+        tzaar.players.commandline tzaar.players.ai.provided]
   :javac-options ["-target" "1.8" "-source" "1.8"]
-  :prep-tasks [["compile" "tzaar.player" "tzaar.util.logging" "tzaar.ai.frank2"]
+  :prep-tasks [["compile" "tzaar.player" "tzaar.util.logging"
+                          "tzaar.players.ai.frank2" "tzaar.players.ai.provided"
+                          "tzaar.players.commandline"]
                "javac" "compile"]
   :profiles {:uberjar {:aot :all}}
   :main tzaar.runner)

@@ -1,7 +1,7 @@
 package tzaar.java;
 
-import tzaar.player.CommandlinePlayer;
-import tzaar.player.RandomButLegalAI;
+import tzaar.players.commandline.CommandlinePlayer;
+import tzaar.players.ai.provided.RandomButLegalAI;
 import tzaar.util.logging.Logger;
 import tzaar.util.logging.NoOpLogger;
 import tzaar.util.logging.SystemOutLogger;

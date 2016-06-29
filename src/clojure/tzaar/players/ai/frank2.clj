@@ -1,4 +1,4 @@
-(ns tzaar.ai.frank2
+(ns tzaar.players.ai.frank2
   (:require [tzaar.core :as core]
             [tzaar.player :as player :refer [Player]]
             [clojure.core.async :as a :refer [>! <! <!! go go-loop
