@@ -8,7 +8,7 @@ public class ExamplePlayer implements Player {
         final Color playerColor = gameState.whosTurn();
         final Board board = gameState.board;
 
-        final Move.Attack attackMove = board.allAttackMoves(playerColor)
+        final Move.Attack attackMove = (Move.Attack) board.allAttackMoves(playerColor)
                 .stream()
                 .findFirst()
                 .get();
