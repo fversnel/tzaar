@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha8"]
                  [org.clojure/core.async "0.2.385"]
                  [org.clojure/java.data "0.1.1"]
+                 [cheshire "5.6.3"]
                  [camel-snake-kebab "0.4.0"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
