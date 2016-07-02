@@ -56,7 +56,7 @@ repositories {
 
 dependencies {
     compile "org.clojure:clojure:1.9.0-alpha8"
-    compile "org.fversnel:tzaar:0.1.0"
+    compile "org.fversnel:tzaar:0.1.1-SNAPSHOT"
 }
 ```
 
@@ -112,11 +112,11 @@ Black (YourAI) wins 70% of the games in average 24 turns
 
 ## To be done
 
-- Keep track of time taken by an AI and report it at the end of the match
 - Allow for optional use of chess-like clocks
 - Allow players to resign
 - Add Java Stream API?
 - Add GUI
+- Add JSON Api
 - Add support for Clojurescript
 - Write a clojure.spec and use it to write tests
 
