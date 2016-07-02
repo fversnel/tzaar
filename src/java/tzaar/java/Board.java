@@ -45,11 +45,11 @@ public class Board {
         return callClojure("moves", this, position);
     }
 
-    public Collection<Move.Stack> stackMoves(final Position position) {
+    public Collection<Move> stackMoves(final Position position) {
         return filterStackMoves(moves(position));
     }
 
-    public Collection<Move.Attack> attackMoves(final Position position) {
+    public Collection<Move> attackMoves(final Position position) {
         return filterAttackMoves(moves(position));
     }
 
@@ -57,27 +57,25 @@ public class Board {
         return callClojure("all-moves", this, color);
     }
 
-    public Collection<Move.Attack> allAttackMoves(final Color color) {
+    public Collection<Move> allAttackMoves(final Color color) {
         return filterAttackMoves(allMoves(color));
     }
 
-    public Collection<Move.Stack> allStackMoves(final Color color) {
+    public Collection<Move> allStackMoves(final Color color) {
         return filterStackMoves(allMoves(color));
     }
 
-    private Collection<Move.Attack> filterAttackMoves(Collection<Move> moves) {
+    private Collection<Move> filterAttackMoves(Collection<Move> moves) {
         return moves
                 .stream()
                 .filter(Move::isAttack)
-                .map(move -> (Move.Attack)move)
                 .collect(Collectors.toList());
     }
 
-    private Collection<Move.Stack> filterStackMoves(Collection<Move> moves) {
+    private Collection<Move> filterStackMoves(Collection<Move> moves) {
         return moves
                 .stream()
                 .filter(Move::isStack)
-                .map(move -> (Move.Stack)move)
                 .collect(Collectors.toList());
     }
 
