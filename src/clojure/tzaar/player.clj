@@ -19,9 +19,10 @@
                (if (core/first-turn? game-state)
                  (s/valid? ::spec/first-turn turn)
                  (s/valid? ::spec/turn turn))]}
-        (let [time-taken (timer/nanos-elapsed timer)]
+        (let [turn (with-meta turn {:tzaar/time-taken (timer/nanos-elapsed timer)
+                                    :tzaar/played-by (.getClass player)})]
           (if (core/valid-turn? game-state turn)
-            (play-turn [turn time-taken])
+            (play-turn turn)
             (throw (Exception. (str (core/color->str (core/whos-turn game-state))
                                     " invalidly plays '"
                                     (core/turn->str turn)

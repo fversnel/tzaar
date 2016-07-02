@@ -5,6 +5,7 @@ import clojure.lang.IFn;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Board {
     public final List<List<Slot>> slots;

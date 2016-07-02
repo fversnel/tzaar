@@ -113,9 +113,13 @@
   [(from-java (.-firstMove turn))
    (from-java (.-secondMove turn))])
 (defmethod to-java [Turn clojure.lang.APersistentVector]
-  [_ [first-move second-move]]
-  (Turn. (to-java Move first-move)
-         (to-java Move second-move)))
+  [_ turn]
+  (let [first-turn? (= (count turn) 1)
+        [first-move second-move] turn]
+    (if first-turn?
+      (Turn/firstTurn (to-java Move first-move))
+      (Turn. (to-java Move first-move)
+             (to-java Move second-move)))))
 
 (defmethod from-java Board
   [board]
@@ -129,8 +133,9 @@
         (to-java Slot slot)))))
 
 (defmethod to-java [GameState clojure.lang.APersistentMap]
-  [_ {:keys [initial-board board turns]}]
-  (GameState. (to-java Board initial-board)
+  [_ {:keys [game-id initial-board board turns]}]
+  (GameState. game-id
+              (to-java Board initial-board)
               (map #(to-java Turn %) turns)
               (to-java Board board)))
 
@@ -159,7 +164,8 @@
            (reify java.util.function.Consumer
              (accept [_ turn]
                ; If it's the first turn of the game
-               ; we just ignore the second move
+               ; we just ignore the second move to
+               ; conform to the play-turn contract
                (let [turn (from-java turn)
                      turn (if (core/first-turn? game-state)
                             [(first turn)]

@@ -21,7 +21,17 @@ public class Stats {
 
     @Override
     public String toString() {
-        return String.format("[Time taken: %s, turns: %d]", formatNanos(timeTaken), totalTurns);
+        return String.format("[" +
+                "Time taken: %s, " +
+                "turns: %d, " +
+                "total attack moves: %d, " +
+                "total stack moves: %d, " +
+                "total pass moves: %d]",
+                formatNanos(timeTaken),
+                totalTurns,
+                totalAttackMoves,
+                totalStackMoves,
+                totalPassMoves);
     }
 
     public static String formatNanos(Duration duration) {
