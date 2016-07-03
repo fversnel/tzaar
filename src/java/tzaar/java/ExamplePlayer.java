@@ -9,7 +9,6 @@ public class ExamplePlayer implements Player {
         final Board board = gameState.board;
 
         final Move.Attack attackMove = (Move.Attack) board.allAttackMoves(playerColor)
-                .stream()
                 .findFirst()
                 .get();
         final Turn turn;
@@ -18,7 +17,6 @@ public class ExamplePlayer implements Player {
         } else {
             Move secondMove = board.applyMove(attackMove)
                     .allMoves(playerColor)
-                    .stream()
                     .findFirst()
                     .orElse(Move.Pass);
             turn = new Turn(attackMove, secondMove);

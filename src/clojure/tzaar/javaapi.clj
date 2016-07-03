@@ -5,7 +5,7 @@
            [camel-snake-kebab.core :refer [->kebab-case
                                            ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
-                       Piece Position Stack Turn Color Piece$Type Neighbor FinishedGame GameState Stats)
+                       Piece Position Stack Turn Color Piece$Type StackWithPosition FinishedGame GameState Stats)
            (java.time Duration))
   (:gen-class))
 
@@ -64,15 +64,15 @@
   [_ [x y]]
   (Position. x y))
 
-(defmethod from-java Neighbor
+(defmethod from-java StackWithPosition
   [neighbor]
   (core/->Slot
     (from-java (.stack neighbor))
     (from-java (.-position neighbor))))
-(defmethod to-java [Neighbor clojure.lang.IRecord]
+(defmethod to-java [StackWithPosition clojure.lang.IRecord]
   [_ neighbor]
-  (Neighbor. (to-java Position (:position neighbor))
-             (to-java Stack (:slot neighbor))))
+  (StackWithPosition. (to-java Position (:position neighbor))
+                      (to-java Stack (:slot neighbor))))
 
 (defmethod from-java Slot
   [slot]
@@ -123,14 +123,10 @@
 
 (defmethod from-java Board
   [board]
-  (vec (for [row (.-slots board)]
-    (vec (for [slot row] (from-java slot))))))
+  (.clojureBoard board))
 (defmethod to-java [Board clojure.lang.APersistentVector]
   [_ board]
-  (Board.
-    (for [row board]
-      (for [slot row]
-        (to-java Slot slot)))))
+  (Board. board))
 
 (defmethod to-java [GameState clojure.lang.APersistentMap]
   [_ {:keys [game-id initial-board board turns]}]
@@ -184,7 +180,8 @@
           `(to-java ~return-type
                     (apply ~f (map from-java ~args)))))))
 
-(def-api neighbors [Neighbor] [Board board Position position] core/neighbors)
+(def-api iterate-stacks [StackWithPosition] [Color color Board board] core/iterate-stacks)
+(def-api neighbors [StackWithPosition] [Board board Position position] core/neighbors)
 (def-api moves [Move] [Board board Position position] core/moves)
 (def-api all-moves [Move] [Board board Color color] core/all-moves)
 (def-api apply-move Board [Board board Move move] core/apply-move)
@@ -194,3 +191,8 @@
 (def-api lost? Boolean [Board board Color player-color Boolean first-turn-move?] core/lost?)
 (def-api random-board Board [] core/random-board)
 (def-api default-board Board [] (fn [] core/default-board))
+
+(defn to-slots [^Board board]
+  (for [row board]
+    (for [slot row]
+      (to-java Slot slot))))

@@ -4,33 +4,16 @@ import clojure.lang.ArraySeq;
 import clojure.lang.IFn;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Board {
-    public final List<List<Slot>> slots;
+    /**
+     * You probably don't need this in Java
+     */
+    public final Object clojureBoard;
 
-    public Board(final List<List<Slot>> slots) {
-        this.slots = slots;
-    }
-
-    public Slot lookup(final int x, final int y) {
-        return lookup(new Position(x, y));
-    }
-
-    public Slot lookup(final Position position) {
-        final Slot s;
-        if(0 <= position.y && position.y < slots.size()) {
-            final List<Slot> row = slots.get(position.y);
-            if(0 <= position.x && position.x < row.size()) {
-                s = row.get(position.x);
-            } else {
-                s = Slot.Nothing;
-            }
-        } else {
-            s = Slot.Nothing;
-        }
-        return s;
+    public Board(Object clojureBoard) {
+        this.clojureBoard = clojureBoard;
     }
 
     public static Board standard() {
@@ -41,46 +24,38 @@ public class Board {
         return callClojure("random-board");
     }
 
-    public Collection<Move> moves(final Position position) {
-        return callClojure("moves", this, position);
+    public Stream<Move> moves(final Position position) {
+        return Board.<Collection<Move>>callClojure("moves", this, position)
+                .stream();
     }
 
-    public Collection<Move> stackMoves(final Position position) {
-        return filterStackMoves(moves(position));
+    public Stream<Move> stackMoves(final Position position) {
+        return moves(position).filter(Move::isStack);
     }
 
-    public Collection<Move> attackMoves(final Position position) {
-        return filterAttackMoves(moves(position));
+    public Stream<Move> attackMoves(final Position position) {
+        return moves(position).filter(Move::isAttack);
     }
 
-    public Collection<Move> allMoves(final Color color) {
-        return callClojure("all-moves", this, color);
+    public Stream<Move> allMoves(final Color color) {
+        return Board.<Collection<Move>>callClojure("all-moves", this, color)
+                .stream();
     }
 
-    public Collection<Move> allAttackMoves(final Color color) {
-        return filterAttackMoves(allMoves(color));
+    public Stream<Move> allAttackMoves(final Color color) {
+        return allMoves(color).filter(Move::isAttack);
     }
 
-    public Collection<Move> allStackMoves(final Color color) {
-        return filterStackMoves(allMoves(color));
+    public Stream<Move> allStackMoves(final Color color) {
+        return allMoves(color).filter(Move::isStack);
     }
 
-    private Collection<Move> filterAttackMoves(Collection<Move> moves) {
-        return moves
-                .stream()
-                .filter(Move::isAttack)
-                .collect(Collectors.toList());
-    }
-
-    private Collection<Move> filterStackMoves(Collection<Move> moves) {
-        return moves
-                .stream()
-                .filter(Move::isStack)
-                .collect(Collectors.toList());
-    }
-
-    public Collection<Neighbor> neighbors(final Position position) {
+    public Collection<StackWithPosition> neighbors(final Position position) {
         return callClojure("neighbors", this, position);
+    }
+
+    public Collection<StackWithPosition> stacks(final Color color) {
+        return callClojure("iterate-stacks", color, this);
     }
 
     public Board applyMove(final Move move) {
@@ -97,6 +72,18 @@ public class Board {
 
     public boolean hasLost(final Color playerColor, final boolean isFirstMoveOfTurn) {
         return callClojure("lost?", this, playerColor, isFirstMoveOfTurn);
+    }
+
+    /**
+     * WARNING: Only call this if you want to have low-level access to the board.
+     * Otherwise use any of the other methods like allMoves(), neighbors() or stacks()
+     * they are much faster since slots() has to completely copy a clojure data
+     * structure into a java collection.
+     *
+     * @return A 2D list of positions on the board
+     */
+    public List<List<Slot>> slots() {
+        return callClojure("to-slots", this);
     }
 
     @Override
