@@ -24,6 +24,10 @@ public class Board {
         return callClojure("random-board");
     }
 
+    public Slot lookup(final Position position) {
+        return callClojure("lookup", this, position);
+    }
+
     public Stream<Move> moves(final Position position) {
         return Board.<Collection<Move>>callClojure("moves", this, position)
                 .stream();
