@@ -1,5 +1,6 @@
 package tzaar.java;
 
+import tzaar.players.ai.provided.AttackThenStackAI;
 import tzaar.players.commandline.CommandlinePlayer;
 import tzaar.players.ai.provided.RandomButLegalAI;
 import tzaar.util.logging.Logger;
@@ -23,6 +24,7 @@ public class Api {
 
     public static final tzaar.player.Player COMMAND_LINE_PLAYER = new CommandlinePlayer();
     public static final tzaar.player.Player RANDOM_BUT_LEGAL_AI = new RandomButLegalAI();
+    public static final tzaar.player.Player ATTACK_THEN_STACK_AI = new AttackThenStackAI();
     public static final tzaar.player.Player FRANK_AI_2 = new tzaar.players.ai.frank2.FrankAI();
 
     public static FinishedGame playGame(final Object whitePlayer,

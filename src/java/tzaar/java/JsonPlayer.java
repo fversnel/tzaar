@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 /*
 Example Game state JSON:
 
-{"id": "id63bb3131-2835-4d3a-a42a-e6c2aebe6ec9",
+{"gameId": "id63bb3131-2835-4d3a-a42a-e6c2aebe6ec9",
  "initialBoard": [],
  "board": [],
  "turns": []}

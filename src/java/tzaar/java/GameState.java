@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class GameState {
-    public final UUID id;
+    public final UUID gameId;
     public final Board initialBoard;
     public final List<Turn> turns;
     public final Board board;
 
-    public GameState(final UUID id,
+    public GameState(final UUID gameId,
                      final Board initialBoard,
                      final List<Turn> turns,
                      final Board currentBoard) {
-        this.id = id;
+        this.gameId = gameId;
         this.initialBoard = initialBoard;
         this.turns = turns;
         this.board = currentBoard;

@@ -123,7 +123,7 @@
 
 (defmethod from-java Board
   [board]
-  (.clojureBoard board))
+  (._clojureBoard board))
 (defmethod to-java [Board clojure.lang.APersistentVector]
   [_ board]
   (Board. board))

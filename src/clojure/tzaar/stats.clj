@@ -1,7 +1,7 @@
 (ns tzaar.stats
   (:require [tzaar.core :as core]))
 
-(defn combine [v1 v2]
+(defn- combine [v1 v2]
   (cond
     (number? v1) (+ v1 v2)
     (coll? v1) (concat v1 v2)))

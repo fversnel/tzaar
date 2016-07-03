@@ -16,6 +16,7 @@
 (def default-board core/default-board)
 
 (def random-but-legal-ai (provided-ai/->RandomButLegalAI))
+(def attack-then-stack-ai (provided-ai/->AttackThenStackAI))
 (def command-line-player (->CommandlinePlayer))
 
 (defn play-game

@@ -10,10 +10,10 @@ public class Board {
     /**
      * You probably don't need this in Java
      */
-    public final Object clojureBoard;
+    public final Object _clojureBoard;
 
-    public Board(Object clojureBoard) {
-        this.clojureBoard = clojureBoard;
+    public Board(final Object clojureBoard) {
+        this._clojureBoard = clojureBoard;
     }
 
     public static Board standard() {
