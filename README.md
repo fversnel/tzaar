@@ -20,7 +20,7 @@ to be thread-safe.
 With Leiningen/Boot:
 
 ```clojure
-[org.fversnel/tzaar "0.1.0"]
+[org.fversnel/tzaar "0.1.1-SNAPSHOT"]
 ```
 
 Implementing a new player (human or AI):
@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.clojure:clojure:1.9.0-alpha8"
+    compile "org.clojure:clojure:1.9.0-alpha9"
     compile "org.fversnel:tzaar:0.1.1-SNAPSHOT"
 }
 ```
