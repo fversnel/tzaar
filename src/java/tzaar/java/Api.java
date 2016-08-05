@@ -44,4 +44,6 @@ public class Api {
                         logger);
         return (FinishedGame) TO_JAVA.invoke(FinishedGame.class, winner);
     }
+
+
 }

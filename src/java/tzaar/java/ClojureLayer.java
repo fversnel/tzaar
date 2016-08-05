@@ -8,10 +8,10 @@ public class ClojureLayer {
     private ClojureLayer() {
     }
 
-    private static final Object JSON_API = ClojureNamespace.REQUIRE.invoke(Clojure.read("tzaar.jsonapi"));
     private static final Object FRANK_AI2 = ClojureNamespace.REQUIRE.invoke(Clojure.read("tzaar.players.ai.frank2"));
     public static final ClojureNamespace TIMER = new ClojureNamespace("tzaar.util.timer");
     public static final ClojureNamespace JAVA_API = new ClojureNamespace("tzaar.javaapi");
+    public static final ClojureNamespace JSON_API = new ClojureNamespace("tzaar.jsonapi");
     public static final ClojureNamespace GAME = new ClojureNamespace("tzaar.game");
     public static final ClojureNamespace LOGGING = new ClojureNamespace("tzaar.util.logging");
 

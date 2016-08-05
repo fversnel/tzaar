@@ -1,25 +1,22 @@
 package tzaar.java;
 
+import clojure.lang.IFn;
 import java.util.function.Consumer;
 
-/*
-Example Game state JSON:
+public abstract class JsonPlayer implements tzaar.player.Player {
 
-{"gameId": "id63bb3131-2835-4d3a-a42a-e6c2aebe6ec9",
- "initialBoard": [],
- "board": [],
- "turns": []}
+    private static final IFn GameStateToJson = ClojureLayer.JSON_API.function("game-state->json");
+    private static final IFn JsonToTurn = ClojureLayer.JSON_API.function("json->turn");
 
-Example Turn:
+    @Override
+    public final Object _play(Object gameState, Object playTurn) {
+        play((String)GameStateToJson.invoke(gameState),
+            turnJson -> {
+                final Object turn = JsonToTurn.invoke(turnJson);
+                ((IFn)playTurn).invoke(turn);
+            });
+        return null;
+    }
 
-[{"moveType": "attack",
-  "from": [0,0],
-  "to": [0,1]},
- {"moveType": "pass"}]
-
-First turn is always an array with one attack move in it
-*/
-
-public interface JsonPlayer {
-    void play(String gameState, Consumer<String> playTurn);
+    protected abstract void play(String gameState, Consumer<String> playTurn);
 }
