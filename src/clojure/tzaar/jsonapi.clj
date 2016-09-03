@@ -1,6 +1,6 @@
 (ns tzaar.jsonapi
-  (require [clojure.walk :as walk]
-           [cheshire.core :as cheshire]))
+  (:require [clojure.walk :as walk]
+            [cheshire.core :as cheshire]))
 
 (def ^:private ^:const parse-keywords true)
 

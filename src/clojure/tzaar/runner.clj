@@ -1,13 +1,13 @@
 (ns tzaar.runner
-  (require [tzaar.game :as game]
-           [tzaar.player]
-           [tzaar.javaapi]
-           [tzaar.jsonapi]
-           [tzaar.players.ai.frank2]
-           [tzaar.util.logging :as logging]
-           [clojure.edn :as edn]
-           [tzaar.core :as core]
-           [tzaar.util.timer :as timer])
+  (:require [tzaar.game :as game]
+            [tzaar.player]
+            [tzaar.javaapi]
+            [tzaar.jsonapi]
+            [tzaar.players.ai.frank2]
+            [tzaar.util.logging :as logging]
+            [clojure.edn :as edn]
+            [tzaar.core :as core]
+            [tzaar.util.timer :as timer])
   (:gen-class))
 
 (defn run-games

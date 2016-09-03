@@ -1,9 +1,9 @@
 (ns tzaar.javaapi
-  (require [tzaar.core :as core]
-           [tzaar.player :as player]
-           [clojure.java.data :refer [from-java to-java]]
-           [camel-snake-kebab.core :refer [->kebab-case
-                                           ->PascalCase]])
+  (:require [tzaar.core :as core]
+            [tzaar.player :as player]
+            [clojure.java.data :refer [from-java to-java]]
+            [camel-snake-kebab.core :refer [->kebab-case
+                                            ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
                        Piece Position Stack Turn Color Piece$Type StackWithPosition FinishedGame GameState Stats)
            (java.time Duration))

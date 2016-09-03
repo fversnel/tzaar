@@ -1,9 +1,9 @@
 (ns tzaar.player
-  (require [tzaar.spec :as spec]
-           [tzaar.util.timer :as timer]
-           [tzaar.core :as core :refer [color->str]]
-           [tzaar.util.macros :refer [try-repeatedly]]
-           [clojure.spec :as s]))
+  (:require [tzaar.spec :as spec]
+            [tzaar.util.timer :as timer]
+            [tzaar.core :as core :refer [color->str]]
+            [tzaar.util.macros :refer [try-repeatedly]]
+            [clojure.spec :as s]))
 
 (defprotocol Player
   (-play [player game-state play-turn]))

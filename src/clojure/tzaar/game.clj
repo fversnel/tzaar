@@ -1,14 +1,14 @@
 (ns tzaar.game
-  (require [tzaar.core :as core]
-           [tzaar.stats :as stats]
-           [tzaar.player :refer [play]]
-           [tzaar.util.logging :as logging]
-           [tzaar.util.timer :as timer]
-           [tzaar.players.ai.provided :as provided-ai]
-           [tzaar.players.commandline :refer [->CommandlinePlayer]]
-           [clojure.core.async :refer [>! <! <!! go go-loop
-                                       chan put! alts! timeout
-                                       close!]])
+  (:require [tzaar.core :as core]
+            [tzaar.stats :as stats]
+            [tzaar.player :refer [play]]
+            [tzaar.util.logging :as logging]
+            [tzaar.util.timer :as timer]
+            [tzaar.players.ai.provided :as provided-ai]
+            [tzaar.players.commandline :refer [->CommandlinePlayer]]
+            [clojure.core.async :refer [>! <! <!! go go-loop
+                                        chan put! alts! timeout
+                                        close!]])
   (:import (tzaar.util.logging Logger)
            (java.util UUID)))
 
