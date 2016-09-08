@@ -54,11 +54,10 @@
             position)))
 
 (defn iterate-stacks [color board]
-  (->> board
-       iterate-slots
-       (filter (fn [{:keys [slot]}]
-                 (and (stack? slot)
-                      (stack-color? color slot))))))
+  (sequence (filter (fn [{:keys [slot]}]
+                      (and (stack? slot)
+                           (stack-color? color slot))))
+            (iterate-slots board)))
 
 (defn apply-move
   [board {:keys [from to move-type] :as move}]
@@ -81,10 +80,10 @@
 
 (defn stack-type-missing?
   [board color]
-  (let [stacks (->> board
-                    (iterate-stacks color)
-                    (map (comp stack-type :slot)))]
-    (not= stack-types (set stacks))))
+  (let [stacks (into #{}
+                     (map (comp stack-type :slot))
+                     (iterate-stacks color board))]
+    (not= stack-types stacks)))
 
 (defn safe-lookup [board [^int x ^int y]]
   (or (get-in board [y x]) :nothing))
@@ -93,18 +92,20 @@
   (letfn [(neighbor [[Δx Δy]]
             (->> position
                  (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]))
-                 (drop 1) ; You're not your own neighbor
-                 (map #(->Slot (safe-lookup board %) %))
-                 (remove #(= :empty (:slot %)))
+                 (sequence (comp
+                             (drop 1)
+                             (map #(->Slot (safe-lookup board %) %))
+                             (remove #(= :empty (:slot %)))))
                  first))]
-    (->> [; Horizontal
-          [1 0] [-1 0]
-          ; Vertical
-          [0 1] [0 -1]
-          ; Diagonal
-          [-1 -1] [1 1]]
-         (map neighbor)
-         (remove #(= :nothing (:slot %))))))
+    (sequence (comp (map neighbor)
+                    (remove #(= :nothing (:slot %))))
+              [; horizontal
+               [1 0] [-1 0]
+               ; vertical
+               [0 1] [0 -1]
+               ; diagonal
+               [-1 -1] [1 1]])))
+
 
 (defn moves [board position]
   (let [slot (lookup board position)]
@@ -112,33 +113,28 @@
       (let [stack slot
             color (stack-color stack)]
         (->> (neighbors board position)
-             (remove #(= :nothing (:slot %)))
-             (map #(->Move
-                    (if (stack-color? color (:slot %))
-                      :stack
-                      :attack)
-                     position
-                     (:position %)))
-             ; Remove stacks that cannot be attacked
-             (remove (fn [move]
-                       (and (attack-move? move)
-                            (let [enemy-stack (lookup board (:to move))]
-                              (< (stack-size stack) (stack-size enemy-stack))))))
-             ; Remove moves that would kill yourself
-             (remove (fn [move]
-                       (and (stack-move? move)
-                            (stack-type-missing?
-                              (apply-move board move)
-                              color))))
-             set))
+             (into #{} (comp (map #(->Move
+                                     (if (stack-color? color (:slot %))
+                                         :stack
+                                         :attack)
+                                     position
+                                     (:position %)))
+                             ; Remove stacks that cannot be attacked
+                             (remove #(and (attack-move? %)
+                                            (let [enemy-stack (lookup board (:to %))]
+                                              (< (stack-size stack) (stack-size enemy-stack)))))
+                             ; Remove moves that would kill yourself
+                             (remove #(and (stack-move? %)
+                                            (stack-type-missing?
+                                              (apply-move board %)
+                                              color)))))))
       #{})))
 
 (defn all-moves
   [board color]
-  (->> board
-       (iterate-stacks color)
-       (map :position)
-       (mapcat #(moves board %))))
+  (sequence (comp (map :position)
+                  (mapcat #(moves board %)))
+            (iterate-stacks color board)))
 
 (defn valid-move?
   [board color first-turn-move? move]
