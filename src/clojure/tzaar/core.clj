@@ -90,14 +90,13 @@
 
 (defn neighbors [board position]
   (letfn [(neighbor [[Δx Δy]]
-            (->> position
-                 (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]))
-                 (sequence (comp
-                             (drop 1)
-                             (map #(->Slot (safe-lookup board %) %))
-                             (remove #(= :empty (:slot %)))))
-                 first))]
-    (sequence (comp (map neighbor)
+            (sequence
+              (comp (drop 1)
+                    (map #(->Slot (safe-lookup board %) %))
+                    (remove #(= :empty (:slot %)))
+                    (take 1))
+              (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]) position)))]
+    (sequence (comp (mapcat neighbor)
                     (remove #(= :nothing (:slot %))))
               [; horizontal
                [1 0] [-1 0]
@@ -106,28 +105,27 @@
                ; diagonal
                [-1 -1] [1 1]])))
 
-
 (defn moves [board position]
   (let [slot (lookup board position)]
     (if (stack? slot)
       (let [stack slot
-            color (stack-color stack)]
-        (->> (neighbors board position)
-             (into #{} (comp (map #(->Move
-                                     (if (stack-color? color (:slot %))
-                                         :stack
-                                         :attack)
-                                     position
-                                     (:position %)))
-                             ; Remove stacks that cannot be attacked
-                             (remove #(and (attack-move? %)
-                                            (let [enemy-stack (lookup board (:to %))]
-                                              (< (stack-size stack) (stack-size enemy-stack)))))
-                             ; Remove moves that would kill yourself
-                             (remove #(and (stack-move? %)
-                                            (stack-type-missing?
-                                              (apply-move board %)
-                                              color)))))))
+            color (stack-color stack)
+            is-enemy? #(stack-color? color (:slot %))]
+        (into #{}
+             (comp (map #(->Move
+                           (if (is-enemy? %) :attack :stack)
+                           position
+                           (:position %)))
+                   (remove (fn [move]
+                             (condp = (:move-type move)
+                               ; Remove stacks that cannot be attacked
+                               :attack (let [enemy-stack (lookup board (:to move))]
+                                         (< (stack-size stack) (stack-size enemy-stack)))
+                               ; Remove moves that would kill yourself
+                               :stack (stack-type-missing?
+                                        (apply-move board move)
+                                        color)))))
+             (neighbors board position)))
       #{})))
 
 (defn all-moves
