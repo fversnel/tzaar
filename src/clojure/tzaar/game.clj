@@ -8,7 +8,7 @@
             [tzaar.players.commandline :refer [->CommandlinePlayer]]
             [clojure.core.async :refer [>! <! <!! go go-loop
                                         chan put! alts! timeout
-                                        close!]])
+                                        promise-chan]])
   (:import (tzaar.util.logging Logger)
            (java.util UUID)))
 
@@ -21,7 +21,7 @@
 
 (defn play-game
   [white-player black-player board ^Logger l]
-  (let [done-chan (chan 1)
+  (let [done-chan (promise-chan)
         players {:white white-player
                  :black black-player}]
     (go-loop [game-state {:game-id       (UUID/randomUUID)
@@ -33,11 +33,10 @@
             turns (:turns game-state)]
         (logging/writeln l (core/board->str board) \newline)
         (if-not (core/lost? game-state)
-          (let [turn-chan (chan 1)
+          (let [turn-chan (promise-chan)
                 turn-number (inc (count turns))
                 player (player-color players)
-                play-turn #(do (put! turn-chan %)
-                               (close! turn-chan))]
+                play-turn #(put! turn-chan %)]
             (play player game-state play-turn)
             (let [turn (<! turn-chan)
                   time-taken (:tzaar/time-taken (meta turn))]
