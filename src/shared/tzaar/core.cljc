@@ -3,8 +3,8 @@
             ;[taoensso.timbre.profiling :as profiling :refer [p defnp]]
             [clojure.string :as string]))
 
-(def empty-board (parser/read-board "empty-board"))
-(def default-board (parser/read-board "default-board"))
+(def empty-board parser/empty-board)
+(def default-board parser/default-board)
 
 ; TODO Refactor such that the game state is passed around functions
 ; This makes it easier and clearer to determine which moves are valid

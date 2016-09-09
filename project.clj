@@ -3,12 +3,17 @@
   :url "https://github.com/fversnel/tzaar"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.9.0-alpha11"]
+  :dependencies [;; Clojure
+                 [org.clojure/clojure "1.9.0-alpha11"]
                  [org.clojure/core.async "0.2.385"]
                  [org.clojure/java.data "0.1.1"]
                  [cheshire "5.6.3"]
-                 [camel-snake-kebab "0.4.0"]]
-  :source-paths ["src/clojure"]
+                 [camel-snake-kebab "0.4.0"]
+
+                 ;; Clojurescript
+                 [org.clojure/clojurescript "1.9.229"]]
+  :plugins [[lein-cljsbuild "1.1.4"]]
+  :source-paths ["src/shared" "src/clojure"]
   :java-source-paths ["src/java"]
   :aot [tzaar.javaapi tzaar.player tzaar.game tzaar.util.logging
         tzaar.players.commandline tzaar.players.ai.provided
@@ -19,4 +24,9 @@
                           "tzaar.players.commandline"]
                "javac" "compile"]
   :profiles {:uberjar {:aot :all}}
-  :main tzaar.runner)
+  :main tzaar.runner
+
+  :cljsbuild {:builds [{:source-paths ["src/shared" "src/clojurescript"]
+                        :compiler {:output-to "resources/public/js/main.js"
+                                   :optimizations :none
+                                   :pretty-print true}}]})
