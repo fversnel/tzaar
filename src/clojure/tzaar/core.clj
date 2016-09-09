@@ -50,11 +50,10 @@
   (for [y (range (count board))
         x (range (count (nth board y)))
         :let [position [x y]]]
-    (->Slot (lookup board position)
-            position)))
+    (->Slot (lookup board position) position)))
 
 (defn iterate-stacks [color board]
-  (sequence (filter (fn [{:keys [slot]}]
+  (eduction (filter (fn [{:keys [slot]}]
                       (and (stack? slot)
                            (stack-color? color slot))))
             (iterate-slots board)))
@@ -90,7 +89,7 @@
 
 (defn neighbors [board position]
   (letfn [(neighbor [[Δx Δy]]
-            (sequence
+            (eduction
               (comp (drop 1)
                     (map #(->Slot (safe-lookup board %) %))
                     (remove #(= :empty (:slot %)))
