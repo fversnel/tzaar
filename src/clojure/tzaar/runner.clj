@@ -66,7 +66,7 @@
                                   "wins"
                                   (str (percentage-wins (player-color games-by-winner)) "%")
                                   "of the games"
-                                  "in average" (avg-turns (player-color games-by-winner)) "turns"
+                                  "in average" (avg-turns finished-games) "turns"
                                   "taking" (avg-time player-color) "per turn"))]
       (println "Played" (count finished-games) "games of Tzaar:")
       (print-player :white)
