@@ -117,7 +117,7 @@
                            position
                            (:position %)))
                    (remove (fn [move]
-                             (condp = (:move-type move)
+                             (case (:move-type move)
                                ; Remove stacks that cannot be attacked
                                :attack (let [enemy-stack (lookup board (:to move))]
                                          (< (stack-size stack) (stack-size enemy-stack)))
