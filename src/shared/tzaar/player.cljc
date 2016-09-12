@@ -15,8 +15,7 @@
           player
           game-state
           (fn [turn]
-            {:pre [(not-any? nil? turn)
-                   (if (core/first-turn? game-state)
+            {:pre [(if (core/first-turn? game-state)
                      (s/valid? ::spec/first-turn turn)
                      (s/valid? ::spec/turn turn))]}
             (let [turn (with-meta turn {:tzaar/time-taken (timer/nanos-elapsed timer)

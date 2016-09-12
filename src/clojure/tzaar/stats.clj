@@ -32,6 +32,7 @@
 (defn stats [finished-game]
   (letfn [(player-stats [color]
             (let [turns (->> (:turns finished-game)
+                             (filter core/resignation?)
                              (partition 2)
                              (map (if (= color :white) first second)))]
               (reduce update-stats initial-stats turns)))]

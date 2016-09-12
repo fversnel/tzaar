@@ -16,8 +16,11 @@
                     :stack ::stack-move
                     :pass ::pass-move))
 
-(s/def ::first-turn (s/tuple ::attack-move))
-(s/def ::turn (s/tuple ::attack-move ::move))
+(s/def ::resignation core/resignation?)
+(s/def ::first-turn (s/or :turn (s/tuple ::attack-move)
+                          :resignation ::resignation))
+(s/def ::turn (s/or :turn (s/tuple ::attack-move ::move)
+                    :resignation ::resignation))
 
 (s/def ::piece (s/tuple #{:white :black} core/stack-types))
 (defn piece-color [piece] (first piece))

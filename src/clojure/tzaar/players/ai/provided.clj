@@ -1,6 +1,7 @@
 (ns tzaar.players.ai.provided
   (:require [tzaar.player :refer [Player]]
-            [tzaar.core :refer :all]))
+            [tzaar.core :refer :all]
+            [tzaar.core :as core]))
 
 (defn- attack-moves [board color]
   (->> (all-moves board color)
@@ -43,3 +44,8 @@
                  [attack-move]
                  [attack-move second-move])]
       (play-turn turn))))
+
+(defrecord ResigningPlayer []
+  tzaar.player/Player
+  (-play [_ _ play-turn]
+    (play-turn core/resignation)))

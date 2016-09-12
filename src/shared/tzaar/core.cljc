@@ -29,6 +29,8 @@
 (defn stack-move? [move] (= :stack (:move-type move)))
 (def pass-move (->Move :pass nil nil))
 (defn pass-move? [move] (= :pass (:move-type move)))
+(def resignation [:resign])
+(defn resignation? [turn] (= turn resignation))
 
 (def stack-types #{:tzaar :tzarra :tott})
 (defn single-stack [color type] [[color type]])
@@ -140,33 +142,45 @@
            (or (not first-turn-move?) (attack-move? move))
            (= color (stack-color (lookup board (:from move)))))))
 
+
+
+(defn extract-moves [turn]
+  (if (resignation? turn)
+    []
+    turn))
+
 (defn apply-turn [board turn]
-  (reduce apply-move board turn))
+  (reduce apply-move board (extract-moves turn)))
 
 (defn valid-turn?
   [{:keys [board] :as game-state} turn]
-  (let [player-color (whos-turn game-state)
-        [first-move second-move] turn]
-    (and
-      (valid-move? board player-color true first-move)
-      (if-not (first-turn? game-state)
-        (valid-move? (apply-move board first-move)
-                     player-color
-                     false
-                     second-move)
-        (nil? second-move)))))
+  (or
+    (resignation? turn)
+    (let [player-color (whos-turn game-state)
+          [first-move second-move] turn]
+      (and
+        (valid-move? board player-color true first-move)
+        (if-not (first-turn? game-state)
+          (valid-move? (apply-move board first-move)
+                       player-color
+                       false
+                       second-move)
+          (nil? second-move))))))
 
-;;optionally add under which condition the player has lost
-(defn lost?
-  ([game-state]
-   (lost? (:board game-state)
-          (whos-turn game-state)
-          true))
-  ([board player-color first-turn-move?]
-    (let [moves (all-moves board player-color)
-          attack-moves (filter attack-move? moves)]
-      (or (stack-type-missing? board player-color)
-          (and first-turn-move? (empty? attack-moves))))))
+(defn game-over? [{:keys [board turns] :as game-state}]
+  (let [player-color (whos-turn game-state)
+        attack-moves (filter attack-move?
+                             (all-moves board player-color))
+        last-turn (last turns)
+        winner (fn [color win-condition] {:winner color
+                                          :win-condition win-condition})]
+    (cond
+      (empty? attack-moves)
+        (winner (opponent-color player-color) :no-moves)
+      (stack-type-missing? board player-color)
+        (winner (opponent-color player-color) :missing-stack-type)
+      (resignation? last-turn)
+        (winner player-color :resignation))))
 
 (defn random-board []
   (let [color-stacks (fn [color] (map #(single-stack color %)
@@ -243,7 +257,9 @@
     :pass "passes"))
 
 (defn turn->str [turn]
-  (->> turn
-       (map move->str)
-       (map #(str "'" % "'"))
-       (string/join " then ")))
+  (if (resignation? turn)
+    "resign"
+    (->> turn
+      (map move->str)
+      (map #(str "'" % "'"))
+      (string/join " then "))))

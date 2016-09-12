@@ -30,14 +30,15 @@
                           :turns         []}]
       (let [player-color (core/whos-turn game-state)
             board (:board game-state)
-            turns (:turns game-state)]
+            turns (:turns game-state)
+            end-state (core/game-over? game-state)]
         (logging/writeln l (core/board->str board) \newline)
-        (if-not (core/lost? game-state)
+        (if-not end-state
           (let [turn-chan (promise-chan)
                 turn-number (inc (count turns))
                 player (player-color players)
                 play-turn #(put! turn-chan %)]
-            (play player game-state play-turn)
+            (go (play player game-state play-turn))
             (let [turn (<! turn-chan)
                   time-taken (:tzaar/time-taken (meta turn))]
               (logging/writeln l
@@ -51,12 +52,13 @@
                 (-> game-state
                     (assoc :board (core/apply-turn board turn)
                            :turns (conj turns turn))))))
-          (let [winner (core/opponent-color player-color)]
+          (do
             (logging/writeln l
-                             (core/color->str winner)
+                             (core/color->str (:winner end-state))
                              "wins after" (count turns) "turns")
             (>! done-chan {:initial-board (:initial-board game-state)
                            :turns turns
-                           :winner winner
+                           :winner (:winner end-state)
+                           :win-condition (:win-condition end-state)
                            :stats (stats/stats game-state)})))))
     (<!! done-chan)))

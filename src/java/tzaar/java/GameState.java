@@ -1,6 +1,8 @@
 package tzaar.java;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GameState {
@@ -26,4 +28,19 @@ public class GameState {
     public Color whosTurn() {
         return (turns.size() % 2) == 0 ? Color.White : Color.Black;
     }
+
+    public GameState applyTurn(final Turn turn) {
+        final List<Turn> newTurns = new ArrayList<>(turns);
+        newTurns.add(turn);
+        return new GameState(
+                gameId,
+                initialBoard,
+                newTurns,
+                board.applyTurn(turn));
+    }
+
+    // TODO Add game over method
+//    public Optional<> isGameOver() {
+//
+//    }
 }

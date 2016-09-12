@@ -74,10 +74,6 @@ public class Board {
         return callClojure("stack-type-missing?", this, playerColor);
     }
 
-    public boolean hasLost(final Color playerColor, final boolean isFirstMoveOfTurn) {
-        return callClojure("lost?", this, playerColor, isFirstMoveOfTurn);
-    }
-
     /**
      * WARNING: Only call this if you want to have low-level access to the board.
      * Otherwise use any of the other methods like allMoves(), neighbors() or stacks()

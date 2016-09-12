@@ -1,6 +1,8 @@
 package tzaar.java;
 
 public class Turn {
+    public static final Turn RESIGNATION = new Turn(null, null);
+
     public final Move.Attack firstMove;
     public final Move secondMove;
 

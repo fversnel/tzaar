@@ -110,16 +110,17 @@
 
 (defmethod from-java Turn
   [turn]
-  [(from-java (.-firstMove turn))
-   (from-java (.-secondMove turn))])
+  (if (= turn Turn/RESIGNATION)
+    core/resignation
+    [(from-java (.-firstMove turn))
+     (from-java (.-secondMove turn))]))
 (defmethod to-java [Turn clojure.lang.APersistentVector]
   [_ turn]
-  (let [first-turn? (= (count turn) 1)
-        [first-move second-move] turn]
-    (if first-turn?
-      (Turn/firstTurn (to-java Move first-move))
-      (Turn. (to-java Move first-move)
-             (to-java Move second-move)))))
+  (cond
+    (core/resignation? turn) Turn/RESIGNATION
+    (core/first-turn? turn) (Turn/firstTurn (to-java Move (first turn)))
+    :default (Turn. (to-java Move (first turn))
+                    (to-java Move (second turn)))))
 
 (defmethod from-java Board
   [board]
@@ -189,7 +190,6 @@
 (def-api lookup Slot [Board board Position position] core/lookup)
 (def-api board->str String [Board board] core/board->str)
 (def-api stack-type-missing? Boolean [Board board Color player-color] core/stack-type-missing?)
-(def-api lost? Boolean [Board board Color player-color Boolean first-turn-move?] core/lost?)
 (def-api random-board Board [] core/random-board)
 (def-api default-board Board [] (fn [] core/default-board))
 
