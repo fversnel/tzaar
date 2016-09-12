@@ -113,7 +113,6 @@ Black (YourAI) wins 70% of the games in average 24 turns
 ## To be done
 
 - Allow for optional use of chess-like clocks
-- Allow players to resign
 - Add GUI
 - Add JSON Api
 - Add support for Clojurescript

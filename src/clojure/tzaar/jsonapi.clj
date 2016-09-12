@@ -26,6 +26,8 @@
 ;[{"move-type":"attack","from":[8,8],"to":[8,7]}
 ; {"move-type":"stack","from":[4,0],"to":[4,1]}]
 ;
+; Resignation is possible by submitting: ["resign"]
+;
 ; Example Game state:
 ;
 ; {"game-id": "13bf8100-0ea4-474e-98bc-6faa6b04dd13"
