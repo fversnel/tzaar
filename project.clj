@@ -4,14 +4,21 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [;; Clojure
-                 [org.clojure/clojure "1.9.0-alpha11"]
+                 [org.clojure/clojure "1.9.0-alpha12"]
                  [org.clojure/core.async "0.2.385"]
                  [org.clojure/java.data "0.1.1"]
                  [cheshire "5.6.3"]
                  [camel-snake-kebab "0.4.0"]
 
+                 ; Web server stuff
+                 [jarohen/chord "0.7.0" :exclusions [org.clojure/clojure
+                                                     org.clojure/core.async
+                                                     cheshire]]
+
                  ;; Clojurescript
                  [org.clojure/clojurescript "1.9.229"]]
+  :profiles {:uberjar {:aot :all}
+             :dev {:dependencies [[com.taoensso/tufte "1.0.2"]]}}
   :plugins [[lein-cljsbuild "1.1.4"]]
   :source-paths ["src/shared" "src/clojure"]
   :java-source-paths ["src/java"]
@@ -23,7 +30,6 @@
                           "tzaar.players.ai.frank2" "tzaar.players.ai.provided"
                           "tzaar.players.commandline"]
                "javac" "compile"]
-  :profiles {:uberjar {:aot :all}}
   :main tzaar.runner
 
   :cljsbuild {:builds [{:source-paths ["src/shared" "src/clojurescript"]

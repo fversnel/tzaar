@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.clojure:clojure:1.9.0-alpha11"
+    compile "org.clojure:clojure:1.9.0-alpha12"
     compile "org.fversnel:tzaar:0.1.1-SNAPSHOT"
 }
 ```

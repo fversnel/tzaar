@@ -1,6 +1,5 @@
 (ns tzaar.core
   (:require [tzaar.parser :as parser]
-            ;[taoensso.timbre.profiling :as profiling :refer [p defnp]]
             [clojure.string :as string]))
 
 (def empty-board parser/empty-board)
@@ -90,18 +89,18 @@
 (defn neighbors [board position]
   (letfn [(neighbor [[Δx Δy]]
             (eduction
-              (comp (drop 1)
+              (comp (drop 1) ;;you're not your own neighbor
                     (map #(->Slot (safe-lookup board %) %))
                     (remove #(= :empty (:slot %)))
                     (take 1))
               (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]) position)))]
     (sequence (comp (mapcat neighbor)
                     (remove #(= :nothing (:slot %))))
-              [; horizontal
+              [;;horizontal
                [1 0] [-1 0]
-               ; vertical
+               ;;vertical
                [0 1] [0 -1]
-               ; diagonal
+               ;;diagonal
                [-1 -1] [1 1]])))
 
 (defn moves [board position]
@@ -117,11 +116,11 @@
                            (:position %)))
                     (remove (fn [move]
                               (case (:move-type move)
-                                ; Remove stacks that cannot be attacked
+                                ;;remove stacks that cannot be attacked
                                 :attack (let [enemy-stack (lookup board (:to move))]
                                           (< (stack-size stack)
                                              (stack-size enemy-stack)))
-                                ; Remove moves that would kill yourself
+                                ;;remove moves that would kill yourself
                                 :stack (stack-type-missing?
                                          (apply-move board move)
                                          color)))))
@@ -157,7 +156,7 @@
                      second-move)
         (nil? second-move)))))
 
-; Optionally add under which condition the player has lost
+;;optionally add under which condition the player has lost
 (defn lost?
   ([game-state]
    (lost? (:board game-state)
