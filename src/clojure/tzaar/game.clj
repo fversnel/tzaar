@@ -1,5 +1,5 @@
 (ns tzaar.game
-  (:require [tzaar.core :as core]
+  (:require [tzaar.rules :as core]
             [tzaar.stats :as stats]
             [tzaar.player :refer [play]]
             [tzaar.util.logging :as logging]
@@ -48,10 +48,7 @@
                                (core/turn->str turn)
                                "in"
                                (timer/format-nanos time-taken))
-              (recur
-                (-> game-state
-                    (assoc :board (core/apply-turn board turn)
-                           :turns (conj turns turn))))))
+              (recur (core/apply-turn game-state turn))))
           (do
             (logging/writeln l
                              (core/color->str (:winner end-state))

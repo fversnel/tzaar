@@ -6,7 +6,7 @@
             [tzaar.players.ai.frank2]
             [tzaar.util.logging :as logging]
             [clojure.edn :as edn]
-            [tzaar.core :as core]
+            [tzaar.rules :as core]
             [tzaar.util.timer :as timer])
   (:gen-class))
 

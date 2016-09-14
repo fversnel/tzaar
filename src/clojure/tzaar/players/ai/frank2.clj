@@ -1,5 +1,5 @@
 (ns tzaar.players.ai.frank2
-  (:require [tzaar.core :as core]
+  (:require [tzaar.rules :as core]
             [tzaar.player :as player :refer [Player]]
             [clojure.core.async :as a :refer [>! <! <!! go go-loop
                                               chan put! alts! timeout]]))

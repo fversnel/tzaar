@@ -1,6 +1,6 @@
 (ns tzaar.spec
   (:require [clojure.spec :as s]
-            [tzaar.core :as core]))
+            [tzaar.rules :as core]))
 
 (s/def ::position (s/tuple integer? integer?))
 (s/def ::from ::position)

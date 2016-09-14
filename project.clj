@@ -3,19 +3,19 @@
   :url "https://github.com/fversnel/tzaar"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [;; Clojure
+  :dependencies [;;clojure
                  [org.clojure/clojure "1.9.0-alpha12"]
                  [org.clojure/core.async "0.2.385"]
                  [org.clojure/java.data "0.1.1"]
                  [cheshire "5.6.3"]
                  [camel-snake-kebab "0.4.0"]
 
-                 ; Web server stuff
+                 ;;web server stuff
                  [jarohen/chord "0.7.0" :exclusions [org.clojure/clojure
                                                      org.clojure/core.async
                                                      cheshire]]
 
-                 ;; Clojurescript
+                 ;;clojurescript
                  [org.clojure/clojurescript "1.9.229"]]
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[com.taoensso/tufte "1.0.2"]]}}

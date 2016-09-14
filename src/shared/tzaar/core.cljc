@@ -5,18 +5,6 @@
 (def empty-board parser/empty-board)
 (def default-board parser/default-board)
 
-; TODO Refactor such that the game state is passed around functions
-; This makes it easier and clearer to determine which moves are valid
-
-; {:board initial-board
-;  :moves []}
-;
-;(defn initial-state [board]
-;  {:ïnitial-board board
-;   :turns []
-;   :current-board board})
-;
-
 (defrecord Slot [slot position])
 (defrecord Move [move-type from to])
 
@@ -58,25 +46,6 @@
                       (and (stack? slot)
                            (stack-color? color slot))))
             (iterate-slots board)))
-
-(defn apply-move
-  [board {:keys [from to move-type] :as move}]
-  (if-not (pass-move? move)
-    (let [from-stack (lookup board from)
-          to-stack (lookup board to)
-          new-stack (case move-type
-                      :attack from-stack
-                      :stack (concat from-stack to-stack))]
-      (-> board
-          (update-position from :empty)
-          (update-position to new-stack)))
-    board))
-
-(defn first-turn? [{:keys [turns]}]
-  (empty? turns))
-
-(defn whos-turn [{:keys [turns]}]
-  (if (even? (count turns)) :white :black))
 
 (defn stack-type-missing?
   [board color]
@@ -130,57 +99,10 @@
       #{})))
 
 (defn all-moves
-  [board color]
+  [{:keys [board] :as game-state}]
   (sequence (comp (map :position)
                   (mapcat #(moves board %)))
-            (iterate-stacks color board)))
-
-(defn valid-move?
-  [board color first-turn-move? move]
-  (or (pass-move? move)
-      (and ((moves board (:from move)) move)
-           (or (not first-turn-move?) (attack-move? move))
-           (= color (stack-color (lookup board (:from move)))))))
-
-
-
-(defn extract-moves [turn]
-  (if (resignation? turn)
-    []
-    turn))
-
-(defn apply-turn [board turn]
-  (reduce apply-move board (extract-moves turn)))
-
-(defn valid-turn?
-  [{:keys [board] :as game-state} turn]
-  (or
-    (resignation? turn)
-    (let [player-color (whos-turn game-state)
-          [first-move second-move] turn]
-      (and
-        (valid-move? board player-color true first-move)
-        (if-not (first-turn? game-state)
-          (valid-move? (apply-move board first-move)
-                       player-color
-                       false
-                       second-move)
-          (nil? second-move))))))
-
-(defn game-over? [{:keys [board turns] :as game-state}]
-  (let [player-color (whos-turn game-state)
-        attack-moves (filter attack-move?
-                             (all-moves board player-color))
-        last-turn (last turns)
-        winner (fn [color win-condition] {:winner color
-                                          :win-condition win-condition})]
-    (cond
-      (empty? attack-moves)
-        (winner (opponent-color player-color) :no-moves)
-      (stack-type-missing? board player-color)
-        (winner (opponent-color player-color) :missing-stack-type)
-      (resignation? last-turn)
-        (winner player-color :resignation))))
+            (iterate-stacks (whos-turn game-state) board)))
 
 (defn random-board []
   (let [color-stacks (fn [color] (map #(single-stack color %)
@@ -210,12 +132,12 @@
                    (stack-size stack)
                    \space)
                  (case (top-piece stack)
-                       [:white :tott] "w1"
-                       [:white :tzarra] "w2"
-                       [:white :tzaar] "w3"
-                       [:black :tott] "b1"
-                       [:black :tzarra] "b2"
-                       [:black :tzaar] "b3")))
+                   [:white :tott] "w1"
+                   [:white :tzarra] "w2"
+                   [:white :tzaar] "w3"
+                   [:black :tott] "b1"
+                   [:black :tzarra] "b2"
+                   [:black :tzaar] "b3")))
           (slot-to-str [slot]
             (cond
               (stack? slot) (stack-to-str slot)
@@ -230,9 +152,9 @@
                               (take (count board)))
           row-strs (for [row-index (range (count board))]
                      (->> (get board row-index)
-                       (map slot-to-str)
-                       (string/join \space)
-                       (str (+ row-index 1) "  ")))]
+                          (map slot-to-str)
+                          (string/join \space)
+                          (str (+ row-index 1) "  ")))]
       (str
         (str "   " (string/join \space column-indices))
         \newline
@@ -260,6 +182,6 @@
   (if (resignation? turn)
     "resign"
     (->> turn
-      (map move->str)
-      (map #(str "'" % "'"))
-      (string/join " then "))))
+         (map move->str)
+         (map #(str "'" % "'"))
+         (string/join " then "))))

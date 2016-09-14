@@ -1,6 +1,6 @@
  (ns tzaar.players.commandline
    (:require [tzaar.player :refer [Player]]
-             [tzaar.core :refer :all]
+             [tzaar.rules :refer :all]
              [tzaar.util.macros :refer [try-repeatedly]]
              [clojure.string :as string]))
 

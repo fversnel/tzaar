@@ -1,5 +1,5 @@
 (ns tzaar.javaapi
-  (:require [tzaar.core :as core]
+  (:require [tzaar.rules :as core]
             [tzaar.player :as player]
             [clojure.java.data :refer [from-java to-java]]
             [camel-snake-kebab.core :refer [->kebab-case

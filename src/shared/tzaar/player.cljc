@@ -1,7 +1,7 @@
 (ns tzaar.player
   (:require [tzaar.spec :as spec]
             #?(:clj [tzaar.util.timer :as timer])
-            [tzaar.core :as core :refer [color->str]]
+            [tzaar.rules :as core :refer [color->str]]
             [clojure.spec :as s]))
 
 (defprotocol Player
