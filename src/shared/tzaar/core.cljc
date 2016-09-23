@@ -176,7 +176,7 @@
                                           :win-condition win-condition})]
     (cond
       (empty? attack-moves)
-        (winner (opponent-color player-color) :no-moves)
+        (winner (opponent-color player-color) :no-attack-moves)
       (stack-type-missing? board player-color)
         (winner (opponent-color player-color) :missing-stack-type)
       (resignation? last-turn)

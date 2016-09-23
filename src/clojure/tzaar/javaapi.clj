@@ -5,7 +5,7 @@
             [camel-snake-kebab.core :refer [->kebab-case
                                             ->PascalCase]])
   (:import (tzaar.java Board Slot Slot$Stack Move Move$Attack Move$Stack
-                       Piece Position Stack Turn Color Piece$Type StackWithPosition FinishedGame GameState Stats)
+                       Piece Position Stack Turn Color Piece$Type StackWithPosition FinishedGame GameState Stats Winner WinCondition)
            (java.time Duration))
   (:gen-class))
 
@@ -34,6 +34,13 @@
 (defmethod to-java [Color clojure.lang.Keyword]
   [_ color]
   (keyword-to-enum Color color))
+
+(defmethod from-java WinCondition
+  [enum]
+  (enum-to-keyword enum))
+(defmethod to-java [WinCondition clojure.lang.Keyword]
+  [_ win-condition]
+  (keyword-to-enum WinCondition win-condition))
 
 (defmethod from-java Piece$Type
   [enum] (enum-to-keyword enum))
@@ -108,6 +115,15 @@
                         (to-java Position (:to move)))
     :pass Move/Pass))
 
+(defmethod from-java Winner
+  [winner]
+  {:winner (from-java (.-color winner))
+   :win-condition (from-java (.-winCondition winner))})
+(defmethod to-java [Winner clojure.lang.APersistentMap]
+  [_ w]
+  (Winner. (to-java Color (:winner w))
+           (to-java WinCondition (:win-condition w))))
+
 (defmethod from-java Turn
   [turn]
   (if (= turn Turn/RESIGNATION)
@@ -129,6 +145,12 @@
   [_ board]
   (Board. board))
 
+(defmethod from-java GameState
+  [game-state]
+  {:game-id       (.-gameId game-state)
+   :initial-board (from-java (.-initialBoard game-state))
+   :board         (from-java (.-board game-state))
+   :turns         (map from-java (.-turns game-state))})
 (defmethod to-java [GameState clojure.lang.APersistentMap]
   [_ {:keys [game-id initial-board board turns]}]
   (GameState. game-id
@@ -190,6 +212,7 @@
 (def-api lookup Slot [Board board Position position] core/lookup)
 (def-api board->str String [Board board] core/board->str)
 (def-api stack-type-missing? Boolean [Board board Color player-color] core/stack-type-missing?)
+(def-api game-over? Winner [GameState game-state] core/game-over?)
 (def-api random-board Board [] core/random-board)
 (def-api default-board Board [] (fn [] core/default-board))
 

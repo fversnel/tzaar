@@ -1,10 +1,8 @@
 package tzaar.java;
 
-import clojure.lang.ArraySeq;
-import clojure.lang.IFn;
-
 import java.util.*;
 import java.util.stream.Stream;
+import static tzaar.java.ClojureLayer.callClojure;
 
 public class Board {
     /**
@@ -29,7 +27,7 @@ public class Board {
     }
 
     public Stream<Move> moves(final Position position) {
-        return Board.<Collection<Move>>callClojure("moves", this, position)
+        return ClojureLayer.<Collection<Move>>callClojure("moves", this, position)
                 .stream();
     }
 
@@ -42,7 +40,7 @@ public class Board {
     }
 
     public Stream<Move> allMoves(final Color color) {
-        return Board.<Collection<Move>>callClojure("all-moves", this, color)
+        return ClojureLayer.<Collection<Move>>callClojure("all-moves", this, color)
                 .stream();
     }
 
@@ -91,9 +89,4 @@ public class Board {
         return callClojure("board->str", this);
     }
 
-    private static <TReturn> TReturn callClojure(final String clojureFnName,
-                                                 final Object... params) {
-        final IFn clojureFn = ClojureLayer.JAVA_API.function(clojureFnName);
-        return (TReturn) clojureFn.applyTo(ArraySeq.create(params));
-    }
 }

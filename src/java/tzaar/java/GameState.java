@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import static tzaar.java.ClojureLayer.callClojure;
 
 public class GameState {
     public final UUID gameId;
@@ -39,8 +40,7 @@ public class GameState {
                 board.applyTurn(turn));
     }
 
-    // TODO Add game over method
-//    public Optional<> isGameOver() {
-//
-//    }
+    public Optional<Winner> isGameOver() {
+        return Optional.ofNullable(ClojureLayer.<Winner>callClojure("game-over?", this));
+    }
 }

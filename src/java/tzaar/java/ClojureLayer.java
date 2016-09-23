@@ -1,6 +1,7 @@
 package tzaar.java;
 
 import clojure.java.api.Clojure;
+import clojure.lang.ArraySeq;
 import clojure.lang.IFn;
 import tzaar.java.util.ClojureNamespace;
 
@@ -18,4 +19,10 @@ public class ClojureLayer {
     private static final ClojureNamespace JAVA_CONVERSION = new ClojureNamespace("clojure.java.data");
     public static final IFn FROM_JAVA = JAVA_CONVERSION.function("from-java");
     public static final IFn TO_JAVA = JAVA_CONVERSION.function("to-java");
+
+    public static <TReturn> TReturn callClojure(final String clojureFnName,
+                                                 final Object... params) {
+        final IFn clojureFn = ClojureLayer.JAVA_API.function(clojureFnName);
+        return (TReturn) clojureFn.applyTo(ArraySeq.create(params));
+    }
 }
