@@ -3,17 +3,22 @@
             [tzaar.jsonapi :as jsonapi]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
-            [clojure.core.async :refer [>! <! <!! go go-loop
-                                        chan put! alts! timeout
-                                        pipeline promise-chan]]))
+            [clojure.core.async :as a :refer [>! <! <!! go go-loop
+                                              chan put! alts! timeout
+                                              pipeline promise-chan close!]]
+            [chord.http-kit :refer [with-channel]]
+            [org.httpkit.server :refer [run-server]]
+            [clojure.core.async :as a]
+            [tzaar.game :as game]))
 
 (def config (-> "config.edn" io/resource slurp edn/read-string))
 
-(defn channel-player [{:keys [send-chan receive-chan]}]
-  (reify Player
+(defn channel-player [ch]
+  (reify
+    Player
     (-play [_ game-state play-turn]
-      (go (>! send-chan game-state)
-          (play-turn (<! receive-chan))))))
+      (go (>! ch game-state)
+          (play-turn (<! ch))))))
 
 (defn wrap-chans [send-xform
                   receive-xform
@@ -34,6 +39,20 @@
 (def json-chans (partial wrap-chans
                          (map jsonapi/game-state->json)
                          (map jsonapi/json->turn)))
+
+(defn your-handler [req]
+  (with-channel req
+                ws-ch
+                {:read-ch (a/chan 1)
+                 :format  :json}
+    (go
+      (let [{:keys [message]} (<! ws-ch)
+            ch-player (channel-player ws-ch)
+            ]
+        (game/play-game )
+        (prn "Message received:" message)
+        (>! ws-ch "Hello client from server!")
+        (close! ws-ch)))))
 
 
 (defn create-game [request]

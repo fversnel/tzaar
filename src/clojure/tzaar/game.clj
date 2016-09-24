@@ -3,6 +3,7 @@
             [tzaar.stats :as stats]
             [tzaar.player :refer [play]]
             [tzaar.util.logging :as logging]
+            [tzaar.players.rabbitmq :as rabbitmq]
             [tzaar.util.timer :as timer]
             [tzaar.players.ai.provided :as provided-ai]
             [tzaar.players.commandline :refer [->CommandlinePlayer]]
@@ -18,6 +19,7 @@
 (def random-but-legal-ai (provided-ai/->RandomButLegalAI))
 (def attack-then-stack-ai (provided-ai/->AttackThenStackAI))
 (def command-line-player (->CommandlinePlayer))
+(defn rabbitmq-player [] (rabbitmq/rabbitmq-player))
 
 (defn play-game
   [white-player black-player board ^Logger l]

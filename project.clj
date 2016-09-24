@@ -9,11 +9,13 @@
                  [org.clojure/java.data "0.1.1"]
                  [cheshire "5.6.3"]
                  [camel-snake-kebab "0.4.0"]
+                 [com.novemberain/langohr "3.6.1"]
 
                  ; Web server stuff
                  [jarohen/chord "0.7.0" :exclusions [org.clojure/clojure
                                                      org.clojure/core.async
                                                      cheshire]]
+                 [reagent "0.6.0"]
 
                  ;; Clojurescript
                  [org.clojure/clojurescript "1.9.229"]]

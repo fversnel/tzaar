@@ -33,5 +33,5 @@
 ; {"game-id": "13bf8100-0ea4-474e-98bc-6faa6b04dd13"
 ;  "initial-board": [2d array of stacks, e.g. [["white" "tzaar"] ["white" "tott"]]]
 ;  "board" ...
-;  "turns": [[{"move-type":"attack","from":[8,8],"to":[8,7]}
-;             {"move-type":"stack","from":[4,0],"to":[4,1]}]]
+;  "turns": [{"move-type":"attack","from":[8,8],"to":[8,7]}
+;            {"move-type":"stack","from":[4,0],"to":[4,1]}]

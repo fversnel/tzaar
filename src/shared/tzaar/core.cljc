@@ -110,10 +110,10 @@
     (if (stack? slot)
       (let [stack slot
             color (stack-color stack)
-            is-enemy? #(stack-color? color (:slot %))]
+            is-friendly? #(stack-color? color (:slot %))]
         (into #{}
               (comp (map #(->Move
-                           (if (is-enemy? %) :attack :stack)
+                           (if (is-friendly? %) :stack :attack)
                            position
                            (:position %)))
                     (remove (fn [move]

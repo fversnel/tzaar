@@ -30,15 +30,15 @@ public class GameState {
         return (turns.size() % 2) == 0 ? Color.White : Color.Black;
     }
 
-    public GameState applyTurn(final Turn turn) {
-        final List<Turn> newTurns = new ArrayList<>(turns);
-        newTurns.add(turn);
-        return new GameState(
-                gameId,
-                initialBoard,
-                newTurns,
-                board.applyTurn(turn));
-    }
+//    public GameState applyTurn(final Turn turn) {
+//        final List<Turn> newTurns = new ArrayList<>(turns);
+//        newTurns.add(turn);
+//        return new GameState(
+//                gameId,
+//                initialBoard,
+//                newTurns,
+//                board.applyTurn(turn));
+//    }
 
     public Optional<Winner> isGameOver() {
         return Optional.ofNullable(ClojureLayer.<Winner>callClojure("game-over?", this));

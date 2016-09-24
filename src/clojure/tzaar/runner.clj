@@ -6,6 +6,7 @@
             [tzaar.players.ai.frank2]
             [tzaar.util.logging :as logging]
             [clojure.edn :as edn]
+            [tzaar.players.rabbitmq :as rabbit]
             [tzaar.core :as core]
             [tzaar.util.timer :as timer])
   (:gen-class))
@@ -20,22 +21,14 @@
     (for [_ (range n-games)]
       (game/play-game white-player black-player (board-gen) logger))))
 
-(defn -main
-  [& args]
-  {:pre [(even? (count args))]}
+(defn run
+  [white-player black-player logger n-games]
   ; command-line args: -white tzaar.player.CommandlinePlayer
   ;                    -black tzaar.player.RandomButLegalAI
   ;                    -games 100
   ;                    -logging true
-  (let [args (apply hash-map args)
-        create-player (fn [class-name]
-                        (.newInstance (Class/forName class-name)))
-        players {:white (create-player (get args "-white"))
-                 :black (create-player (get args "-black"))}
-        logger (if (edn/read-string (or (get args "-logging") "false"))
-                 logging/system-out-logger
-                 logging/no-op-logger)
-        n-games (Integer/parseInt (or (get args "-games") "1"))]
+  (let [players {:white white-player
+                 :black (rabbit/rabbitmq-player)}]
     ; TODO Don't keep accumulating finished games as we will eventually
     ; run out of memory, instead reduce the games into a final map
     ; that represents win count for each player and total turn count
@@ -71,3 +64,21 @@
       (println "Played" (count finished-games) "games of Tzaar:")
       (print-player :white)
       (print-player :black))))
+
+(defn -main
+  [& args]
+  {:pre [(even? (count args))]}
+  ; command-line args: -white tzaar.player.CommandlinePlayer
+  ;                    -black tzaar.player.RandomButLegalAI
+  ;                    -games 100
+  ;                    -logging true
+  (let [args (apply hash-map args)
+        create-player (fn [class-name]
+                        (.newInstance (Class/forName class-name)))
+        players {:white (create-player (get args "-white"))
+                 :black (create-player (get args "-black"))}
+        logger (if (edn/read-string (or (get args "-logging") "false"))
+                 logging/system-out-logger
+                 logging/no-op-logger)
+        n-games (Integer/parseInt (or (get args "-games") "1"))]
+    (run (:white players) (:black players) logger n-games)))
