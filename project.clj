@@ -4,10 +4,10 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [;; Clojure
-                 [org.clojure/clojure "1.9.0-alpha12"]
-                 [org.clojure/core.async "0.2.385"]
+                 [org.clojure/clojure "1.10.0"]
+                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/java.data "0.1.1"]
-                 [cheshire "5.6.3"]
+                 [cheshire "5.8.1"]
                  [camel-snake-kebab "0.4.0"]
 
                  ; Web server stuff

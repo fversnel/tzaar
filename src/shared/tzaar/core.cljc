@@ -91,19 +91,20 @@
 (defn neighbors [board position]
   (letfn [(neighbor [[Δx Δy]]
             (eduction
-              (comp (drop 1) ;;you're not your own neighbor
-                    (map #(->Slot (safe-lookup board %) %))
-                    (remove #(= :empty (:slot %)))
-                    (take 1))
-              (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]) position)))]
-    (sequence (comp (mapcat neighbor)
-                    (remove #(= :nothing (:slot %))))
-              [;;horizontal
-               [1 0] [-1 0]
-               ;;vertical
-               [0 1] [0 -1]
-               ;;diagonal
-               [-1 -1] [1 1]])))
+             (comp (drop 1) ;;you're not your own neighbor
+                   (map #(->Slot (safe-lookup board %) %))
+                   (remove #(= :empty (:slot %)))
+                   (take 1))
+             (iterate (fn [[x y]] [(+ x Δx) (+ y Δy)]) position)))]
+    (sequence
+     (comp (mapcat neighbor)
+           (remove #(= :nothing (:slot %))))
+     [;horizontal
+      [1 0] [-1 0]
+      ;vertical
+      [0 1] [0 -1]
+      ;diagonal
+      [-1 -1] [1 1]])))
 
 (defn moves [board position]
   (let [slot (lookup board position)]
@@ -124,8 +125,8 @@
                                              (stack-size enemy-stack)))
                                 ;;remove moves that would kill yourself
                                 :stack (stack-type-missing?
-                                         (apply-move board move)
-                                         color)))))
+                                        (apply-move board move)
+                                        color)))))
               (neighbors board position)))
       #{})))
 
@@ -142,8 +143,6 @@
            (or (not first-turn-move?) (attack-move? move))
            (= color (stack-color (lookup board (:from move)))))))
 
-
-
 (defn extract-moves [turn]
   (if (resignation? turn)
     []
@@ -155,17 +154,17 @@
 (defn valid-turn?
   [{:keys [board] :as game-state} turn]
   (or
-    (resignation? turn)
-    (let [player-color (whos-turn game-state)
-          [first-move second-move] turn]
-      (and
-        (valid-move? board player-color true first-move)
-        (if-not (first-turn? game-state)
-          (valid-move? (apply-move board first-move)
-                       player-color
-                       false
-                       second-move)
-          (nil? second-move))))))
+   (resignation? turn)
+   (let [player-color (whos-turn game-state)
+         [first-move second-move] turn]
+     (and
+      (valid-move? board player-color true first-move)
+      (if-not (first-turn? game-state)
+        (valid-move? (apply-move board first-move)
+                     player-color
+                     false
+                     second-move)
+        (nil? second-move))))))
 
 (defn game-over? [{:keys [board turns] :as game-state}]
   (let [player-color (whos-turn game-state)
@@ -176,11 +175,11 @@
                                           :win-condition win-condition})]
     (cond
       (empty? attack-moves)
-        (winner (opponent-color player-color) :no-attack-moves)
+      (winner (opponent-color player-color) :no-attack-moves)
       (stack-type-missing? board player-color)
-        (winner (opponent-color player-color) :missing-stack-type)
+      (winner (opponent-color player-color) :missing-stack-type)
       (resignation? last-turn)
-        (winner player-color :resignation))))
+      (winner player-color :resignation))))
 
 (defn random-board []
   (let [color-stacks (fn [color] (map #(single-stack color %)
@@ -210,17 +209,17 @@
                    (stack-size stack)
                    \space)
                  (case (top-piece stack)
-                       [:white :tott] "w1"
-                       [:white :tzarra] "w2"
-                       [:white :tzaar] "w3"
-                       [:black :tott] "b1"
-                       [:black :tzarra] "b2"
-                       [:black :tzaar] "b3")))
+                   [:white :tott] "w1"
+                   [:white :tzarra] "w2"
+                   [:white :tzaar] "w3"
+                   [:black :tott] "b1"
+                   [:black :tzarra] "b2"
+                   [:black :tzaar] "b3")))
           (slot-to-str [slot]
-            (cond
-              (stack? slot) (stack-to-str slot)
-              (= :empty slot) " e "
-              (= :nothing slot) " n "))]
+                       (cond
+                         (stack? slot) (stack-to-str slot)
+                         (= :empty slot) " e "
+                         (= :nothing slot) " n "))]
     (let [column-indices (->> \a
                               int
                               (iterate inc)
@@ -230,13 +229,13 @@
                               (take (count board)))
           row-strs (for [row-index (range (count board))]
                      (->> (get board row-index)
-                       (map slot-to-str)
-                       (string/join \space)
-                       (str (+ row-index 1) "  ")))]
+                          (map slot-to-str)
+                          (string/join \space)
+                          (str (+ row-index 1) "  ")))]
       (str
-        (str "   " (string/join \space column-indices))
-        \newline
-        (string/join \newline row-strs)))))
+       (str "   " (string/join \space column-indices))
+       \newline
+       (string/join \newline row-strs)))))
 
 (defn color->str [color]
   (string/capitalize (name color)))
@@ -260,6 +259,6 @@
   (if (resignation? turn)
     "resign"
     (->> turn
-      (map move->str)
-      (map #(str "'" % "'"))
-      (string/join " then "))))
+         (map move->str)
+         (map #(str "'" % "'"))
+         (string/join " then "))))
