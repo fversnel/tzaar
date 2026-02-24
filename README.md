@@ -1,3 +1,5 @@
+**Project was moved to: https://codeberg.org/fversnel/tzaar**
+
 # tzaar
 
 Clojure implementation of the abstract strategy game Tzaar by Kris Burm
